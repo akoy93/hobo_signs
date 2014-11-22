@@ -16,4 +16,8 @@
     <string name="password_hint">Enter password</string>
     <string name="login_button">Login</string>
     
+    <!-- Sign Map -->
+    <string name="drop_sign_button">Drop a Sign</string>
+    <string name="my_signs">My Signs</string>
+    
 </resources>
