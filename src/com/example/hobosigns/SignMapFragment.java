@@ -1,5 +1,6 @@
 package com.example.hobosigns;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -23,12 +24,12 @@ public class SignMapFragment extends Fragment {
 
 	private static final String TAG = "SignMapFragment";
 	
-	MapView mapView;
-	GoogleMap map;
-	Context context;
+	private MapView mapView;
+	private GoogleMap map;
+	private Activity parent;
 	
-	public SignMapFragment(Context context) {
-		this.context = context;
+	public SignMapFragment(Activity parent) {
+		this.parent = parent;
 	}
 	
 	@Override
@@ -48,7 +49,7 @@ public class SignMapFragment extends Fragment {
 		
 		Log.i(TAG, "View inflated");
 		
-		int avail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+		int avail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(parent);
 		
 		if (avail == ConnectionResult.SUCCESS || avail == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {
 			Log.i(TAG, "Google services are available");
@@ -69,9 +70,10 @@ public class SignMapFragment extends Fragment {
 	        	map.setMyLocationEnabled(true);
 	        	
 	        	// Updates the location and zoom of the MapView
-		        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10);
+		        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 4);
 		        map.animateCamera(cameraUpdate);
 		        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(43.1, -87.9)));
+		        map.animateCamera(CameraUpdateFactory.zoomTo(3));
 		        
 		        map.addMarker(new MarkerOptions()
 

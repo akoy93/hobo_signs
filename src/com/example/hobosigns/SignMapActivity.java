@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -79,17 +80,21 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		
 		actionBar.addTab(actionBar.newTab()
 				.setText("Map")
-				.setTabListener(new TabListener(new SignMapFragment(getApplicationContext()))));
+				.setTabListener(new TabListener(new SignMapFragment(this))));
 		
 		Log.i(TAG, "Map fragment added");
 		
 		actionBar.addTab(actionBar.newTab()
 				.setText("List")
-				.setTabListener(this));
+				.setTabListener(new TabListener(new SignMapListFragment())));
+		
+		Log.i(TAG, "List fragment added");
 		
 		actionBar.addTab(actionBar.newTab()
 				.setText("Filters")
-				.setTabListener(this));
+				.setTabListener(new TabListener(new SignMapFiltersFragment(this))));
+		
+		Log.i(TAG, "Filter fragment added");
 	}
 
 	@Override
@@ -107,9 +112,13 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			// Launch options activity
+			Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+			startActivity(i);
 			return true;
 		} else if (id == R.id.my_signs) {
 			// Launch My Signs activity
+			Intent i = new Intent(getApplicationContext(), MySignsActivity.class);
+			startActivity(i);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
