@@ -1,6 +1,5 @@
 package com.example.hobosigns;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -21,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class CameraActivity extends Activity {
 
@@ -28,10 +27,41 @@ public class CameraActivity extends Activity {
     private Preview mPreview;
     public static final int MEDIA_TYPE_IMAGE = 1;
 	protected static final String TAG = "Camera Error:";
+	public static final String latIntentTag = "Langitude";
+	public static final String lonIntentTag = "Latitude";
+	public static final String pictureIntentTag = "Picture";
+    private double doubleLatitude;
+    private double doubleLongitude;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+
+        // check if GPS enabled
+        GPSTracker gpsTracker = new GPSTracker(this);
+
+        if (gpsTracker.canGetLocation())
+        {
+            doubleLatitude = gpsTracker.latitude;
+            doubleLongitude = gpsTracker.longitude;
+            /*
+            String country = gpsTracker.getCountryName(this);
+            String city = gpsTracker.getLocality(this);
+            String postalCode = gpsTracker.getPostalCode(this);
+            String addressLine = gpsTracker.getAddressLine(this);*/
+        }
+        else
+        {
+        	Toast.makeText(this, "Please Check that your GPS is turned on", Toast.LENGTH_LONG).show();
+        	//gpsTracker.showSettingsAlert();
+            finish();
+            return;
+        }
+        if(!checkCameraHardware()){
+        	Toast.makeText(this, "A camera could not be detected", Toast.LENGTH_LONG).show();
+        }
+        
         setContentView(R.layout.activity_camera);
 
         // Create an instance of Camera
@@ -60,8 +90,8 @@ public class CameraActivity extends Activity {
     }
 	
 	
-	private boolean checkCameraHardware(Context context) {
-	    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+	private boolean checkCameraHardware(){
+	    if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
 	        // this device has a camera
 	        return true;
 	    } else {
@@ -97,7 +127,9 @@ public class CameraActivity extends Activity {
     		Bitmap bitmap = BitmapFactory.decodeFile(filePath);
     		 //create intent and pass this picture to it
 		    Intent intent = new Intent(getApplicationContext(), MakePicturePostActivity.class);
-		    intent.putExtra("Picture", bitmap);
+		    intent.putExtra(pictureIntentTag, bitmap);
+		    intent.putExtra(latIntentTag, doubleLatitude);
+		    intent.putExtra(lonIntentTag, doubleLongitude);
 		    startActivity(intent);
 
 		    /** Code to save the image to the phone filesystem

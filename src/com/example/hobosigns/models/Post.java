@@ -14,8 +14,8 @@ public class Post {
 
 	private long postID;
 	private String author;
-	private float lat;
-	private float lon;
+	private double lat;
+	private double lon;
 	private Date date;
 	private static final String extension =""; //TODO: add extension
 	
@@ -35,7 +35,7 @@ public class Post {
 		return post;
 	}
 
-	public Post(long postID, String author, float lat, float lon, Date date){
+	public Post(long postID, String author, double lat, double lon, Date date){
 		this.postID = postID;
 		this.author = author;
 		this.lat = lat;
@@ -60,19 +60,19 @@ public class Post {
 		this.author = author;
 	}
 
-	public float getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public void setLat(float lat) {
+	public void setLat(double lat) {
 		this.lat = lat;
 	}
 
-	public float getLon() {
+	public double getLon() {
 		return lon;
 	}
 
-	public void setLon(float lon) {
+	public void setLon(double lon) {
 		this.lon = lon;
 	}
 

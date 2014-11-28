@@ -22,7 +22,7 @@ import com.example.hobosigns.models.Post;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class GetAPI extends AsyncTask<String, Void, InputStream> {
+public class GetAPI extends AsyncTask<String, Void, HttpEntity> {
 
 	private static final String TAG = "GetRequest";
 	MyCallable<Integer> whatToDoWithData;
@@ -32,7 +32,7 @@ public class GetAPI extends AsyncTask<String, Void, InputStream> {
 	}
 
 	@Override
-	protected InputStream doInBackground(String... params) {
+	protected HttpEntity doInBackground(String... params) {
 
 		try {
 			//Create an HTTP client
@@ -44,16 +44,7 @@ public class GetAPI extends AsyncTask<String, Void, InputStream> {
 			StatusLine statusLine = response.getStatusLine();
 			if(statusLine.getStatusCode() == 200) {
 				HttpEntity entity = response.getEntity();
-				InputStream content = entity.getContent();
-				
-				try {
-					//Read the server response and attempt to parse it as JSON
-					
-					return content;
-					//TODO: add this to the adapter
-				} catch (Exception ex) {
-					Log.e(TAG, "Failed to parse JSON due to: " + ex);
-				}
+				return entity;
 			} else {
 				Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
 			}
@@ -63,12 +54,13 @@ public class GetAPI extends AsyncTask<String, Void, InputStream> {
 		return null;
 	}
 	
-	public void onPostExecute(InputStream jsonResult){
+	public void onPostExecute(HttpEntity jsonResult){
 		if(jsonResult == null){return;}
 		try {
 			whatToDoWithData.call(jsonResult);
 			/**	In the callable do something like
 			 * 
+					InputStream content = entity.getContent();
 					Reader reader = new InputStreamReader(jsonResult);
 					GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.setDateFormat("M/d/yy hh:mm a");
