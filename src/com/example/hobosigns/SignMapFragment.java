@@ -3,11 +3,14 @@ package com.example.hobosigns;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -90,6 +93,16 @@ public class SignMapFragment extends Fragment {
 		} else {
 			Log.i(TAG, "Google services are NOT available");
 		}
+		
+		Button b = (Button) view.findViewById(R.id.map_drop_sign_button);
+		b.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Launch sign dropping activity
+				Intent intent = new Intent(v.getContext(),CameraActivity.class);
+				startActivity(intent);	
+			}
+		});
 		
 		return view;	
 	}

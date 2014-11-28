@@ -1,6 +1,7 @@
 package com.example.hobosigns;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -41,8 +42,10 @@ public class SignMapListFragment extends Fragment {
 		Button b = (Button) view.findViewById(R.id.list_drop_sign_button);
 		b.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View v) {
 				// Launch sign dropping activity
+				Intent intent = new Intent(v.getContext(),CameraActivity.class);
+				startActivity(intent);	
 			}
 		});
 		
