@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     
     <application
@@ -49,6 +50,10 @@
             android:name=".SignMapActivity"
             android:label="@string/title_activity_sign_map" >
         </activity>
+        <activity
+            android:name=".MakePicturePostActivity"
+            android:label="@string/app_name" >
+        </activity>
         
         <activity android:name=".CameraActivity"
           android:label="@string/app_name"
@@ -58,13 +63,13 @@
 		        <category android:name="android.intent.category.LAUNCHER" />
    		  </intent-filter> -->
 		</activity>
-
+		
+        <meta-data android:name="com.google.android.gms.version"
+        	android:value="@integer/google_play_services_version" />
+    
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCFgCvuqUdEL5gHIQwPTejL7VHIbUJLF68" />
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="4030500" />
 
         <activity
             android:name=".SettingsActivity"

@@ -3,6 +3,7 @@ package com.example.hobosigns.rest;
 import java.util.concurrent.Callable;
 
 import org.apache.http.HttpEntity;
+import org.json.JSONObject;
 
 /*
  * This interface extends the interface for callable and adds the ability to pass in a json string when a user calls call on the object.
@@ -11,6 +12,6 @@ import org.apache.http.HttpEntity;
 
 public interface MyCallable<T> extends Callable<T> {
 
-	public T call(HttpEntity jsonReader) throws Exception;
+	public T call(JSONObject jsonObject) throws Exception;
 
 }

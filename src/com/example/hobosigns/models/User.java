@@ -3,16 +3,22 @@ package com.example.hobosigns.models;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hobosigns.MainActivity;
 import com.example.hobosigns.SignMapActivity;
+import com.example.hobosigns.rest.GetAPI;
 import com.example.hobosigns.rest.MyCallable;
 import com.example.hobosigns.rest.PostAPI;
 import com.google.gson.Gson;
@@ -21,8 +27,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-	@Expose
-	private String id;
 	@SerializedName("access_token")
 	@Expose
 	private String accessToken;
@@ -43,7 +47,6 @@ public class User {
 	public User(String id, String accessToken, String username,
 			String password, String passwordConfirm) {
 		super();
-		this.id = id;
 		this.accessToken = accessToken;
 		this.username = username;
 		this.password = password;
@@ -58,41 +61,52 @@ public class User {
 		return user;
 	}
 	
+	private List<NameValuePair> getAsNameValPair(){
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
+    	parameters.add(new BasicNameValuePair("access_token", accessToken));
+    	parameters.add(new BasicNameValuePair("username", username));
+    	parameters.add(new BasicNameValuePair("password", password));
+    	parameters.add(new BasicNameValuePair("password_confirm", passwordConfirm));
+		return parameters;
+	}
+	
 	public void login(final Context context){
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.setDateFormat("M/d/yy hh:mm a"); //Format of our JSON dates
-		Gson gson = gsonBuilder.create();
-		String jsonString = gson.toJson(this, User.class);
+		List<NameValuePair> params = this.getAsNameValPair();
 		PostAPI post = new PostAPI(
 				new MyCallable<Integer>(){
 					@Override
 					public Integer call() throws Exception { return null;}
 
 					@Override
-					public Integer call(HttpEntity jsonReader)
-							throws Exception {
-						JSONObject mainObject = new JSONObject(jsonReader.toString());
-						boolean success = mainObject.getBoolean("success");
+					public Integer call(JSONObject jsonObj)
+							throws Exception { 
+						boolean success = jsonObj.getBoolean("success");
 						if(success == true && User.this != null){
-							JSONObject responseObject = mainObject.getJSONObject("response");
+							JSONObject responseObject = jsonObj.getJSONObject("response");
 							String  uniName = responseObject.getString("access_token");
 							User.this.setAccessToken(uniName);
 							//write the user to app context
 							User.this.saveUserToSharedContext(context);
+							Log.i(MainActivity.Tag, "Successful login");
 							//start signmap activity
 							Intent intent = new Intent(context, SignMapActivity.class);
 							context.startActivity(intent);
 						} else {
 							//TODO make toast informing you of failure.
 							Toast.makeText(context, "Failed to log in.", Toast.LENGTH_SHORT).show();
+							Log.i(MainActivity.Tag, "Unsuccessful login");
+							User.this.setAccessToken("mock token");
+							User.this.saveUserToSharedContext(context);
+							Intent i = new Intent(context, SignMapActivity.class);
+							context.startActivity(i);	
 						}
 						return null;
 					}
 					
 				}
-		);
+		, login_extension);
 
-		post.execute(login_extension, jsonString);
+		post.execute(params);
 	}
 	
 	public void saveUserToSharedContext(Context appContext){
@@ -122,20 +136,18 @@ public class User {
         return gson.toJson(this);
     }
 	
-	public void checkLoggedIn(final Context context){
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.setDateFormat("M/d/yy hh:mm a"); //Format of our JSON dates
-		Gson gson = gsonBuilder.create();
-		String jsonString = gson.toJson(this, User.class);
-		PostAPI post = new PostAPI(new MyCallable<Integer>(){
+	public static void checkLoggedIn(final Context context){
+		User user = User.getSavedUser(context);
+		if(user == null){return;}
+		List<NameValuePair> params = user.getAsNameValPair();
+		GetAPI get = new GetAPI(new MyCallable<Integer>(){
 			@Override
 			public Integer call() throws Exception { return null;}
 
 			@Override
-			public Integer call(HttpEntity jsonReader)
+			public Integer call(JSONObject jsonObj)
 					throws Exception {
-				JSONObject mainObject = new JSONObject(jsonReader.toString());
-				boolean success = mainObject.getBoolean("success");
+				boolean success = jsonObj.getBoolean("success");
 				if(success == true){
 					//start signmap activity
 					Intent intent = new Intent(context, SignMapActivity.class);
@@ -149,38 +161,29 @@ public class User {
 				return null;
 			}
 			
-		});
-		post.execute(check_logged_in_extension, jsonString);
+		}, check_logged_in_extension);
+		get.execute(params);
 	}
 	
-	public void logout(Context context){
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.setDateFormat("M/d/yy hh:mm a"); //Format of our JSON dates
-		Gson gson = gsonBuilder.create();
-		String jsonString = gson.toJson(this, User.class);
-		PostAPI post = new PostAPI();
+	public static void logout(final Context context){
+		User user = User.getSavedUser(context);
+		if(user == null){return;}
+		List<NameValuePair> params = user.getAsNameValPair();
+		PostAPI post = new PostAPI(logout_extension);
 		SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferencesReader.edit();
 		editor.putString(PREFS_KEY, null);	
 		editor.commit();
-		post.execute(logout_extension, jsonString);
+		post.execute(params);
+		Intent intent = new Intent(context, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		context.startActivity(intent);
 	}
 	
 	public void createAccount(){
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.setDateFormat("M/d/yy hh:mm a"); //Format of our JSON dates
-		Gson gson = gsonBuilder.create();
-		String jsonString = gson.toJson(this, User.class);
-		PostAPI post = new PostAPI();
-		post.execute(create_extension, jsonString);
-	}
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		List<NameValuePair> params = this.getAsNameValPair();
+		PostAPI post = new PostAPI(create_extension);
+		post.execute(params);
 	}
 
 	public String getAccessToken() {

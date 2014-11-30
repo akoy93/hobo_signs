@@ -1,11 +1,11 @@
 package com.example.hobosigns;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -36,6 +36,7 @@ public class CameraActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO Either remove this from the backstack or set history off
         
 
         // check if GPS enabled
@@ -63,10 +64,8 @@ public class CameraActivity extends Activity {
         }
         
         setContentView(R.layout.activity_camera);
-
         // Create an instance of Camera
         mCamera = getCameraInstance();
-
         // Create our Preview view and set it as the content of our activity.
         mPreview = new Preview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -87,6 +86,15 @@ public class CameraActivity extends Activity {
                 }
             }
         );
+    }
+    
+    public void onRestart(){
+        // Create an instance of Camera
+        mCamera = getCameraInstance();
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new Preview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview);
     }
 	
 	
@@ -116,18 +124,9 @@ public class CameraActivity extends Activity {
 
 	    @Override
 	    public void onPictureTaken(byte[] data, Camera camera) {
-
-	        File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-	        if (pictureFile == null){
-	            Log.d(TAG, "Error creating media file, check storage permissions: ");
-	            return;
-	        }
-
-    		String filePath = pictureFile.getPath();  
-    		Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-    		 //create intent and pass this picture to it
+    		//create intent and pass this picture to it
 		    Intent intent = new Intent(getApplicationContext(), MakePicturePostActivity.class);
-		    intent.putExtra(pictureIntentTag, bitmap);
+		    intent.putExtra(pictureIntentTag, data);
 		    intent.putExtra(latIntentTag, doubleLatitude);
 		    intent.putExtra(lonIntentTag, doubleLongitude);
 		    startActivity(intent);
@@ -176,7 +175,7 @@ public class CameraActivity extends Activity {
         // Create the storage directory if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
+                Log.d(MainActivity.Tag, "failed to create directory");
                 return null;
             }
         }

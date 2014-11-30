@@ -1,50 +1,51 @@
 package com.example.hobosigns.rest;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.hobosigns.models.Post;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-public class GetAPI extends AsyncTask<String, Void, HttpEntity> {
+public class GetAPI extends AsyncTask<List<NameValuePair>, Void, JSONObject> {
 
 	private static final String TAG = "GetRequest";
-	MyCallable<Integer> whatToDoWithData;
+	MyCallable<?> whatToDoWithData;
+	String extension;
 
-	public GetAPI(MyCallable<Integer> whatToDoWithData){
-		this.whatToDoWithData = whatToDoWithData;
+	public GetAPI(MyCallable<?> onResponseMethod, String extension){
+		this.whatToDoWithData = onResponseMethod;
+		this.extension = extension;
 	}
 
 	@Override
-	protected HttpEntity doInBackground(String... params) {
-
+	protected JSONObject doInBackground(List<NameValuePair>... params) {
+		List<NameValuePair> nameValuePairs = params[0];
 		try {
 			//Create an HTTP client
 			HttpClient client = new DefaultHttpClient();
-			HttpGet get = new HttpGet(PostAPI.SERVER_URL);
-			
+			if(nameValuePairs != null){   
+				String paramString = URLEncodedUtils.format(nameValuePairs, "utf-8");
+				extension += ("?"+paramString);
+			}
+			HttpGet get = new HttpGet(PostAPI.SERVER_URL+extension);
 			//Perform the request and check the status code
 			HttpResponse response = client.execute(get);
 			StatusLine statusLine = response.getStatusLine();
 			if(statusLine.getStatusCode() == 200) {
 				HttpEntity entity = response.getEntity();
-				return entity;
+	            String retSrc = EntityUtils.toString(entity); 
+				JSONObject mainObject = new JSONObject(retSrc);
+				return mainObject;
 			} else {
 				Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
 			}
@@ -54,10 +55,10 @@ public class GetAPI extends AsyncTask<String, Void, HttpEntity> {
 		return null;
 	}
 	
-	public void onPostExecute(HttpEntity jsonResult){
-		if(jsonResult == null){return;}
+	public void onPostExecute(JSONObject jsonObj){
+		if(jsonObj == null){return;}
 		try {
-			whatToDoWithData.call(jsonResult);
+			whatToDoWithData.call(jsonObj);
 			/**	In the callable do something like
 			 * 
 					InputStream content = entity.getContent();

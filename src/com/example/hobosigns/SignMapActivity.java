@@ -2,6 +2,8 @@ package com.example.hobosigns;
 
 import java.util.Locale;
 
+import com.example.hobosigns.models.User;
+
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -119,6 +121,10 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			// Launch My Signs activity
 			Intent i = new Intent(getApplicationContext(), MySignsActivity.class);
 			startActivity(i);
+			return true;
+		} else if (id == R.id.logout) {
+			// Launch My Signs activity
+			User.logout(this);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

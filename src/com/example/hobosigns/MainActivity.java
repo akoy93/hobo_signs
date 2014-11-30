@@ -12,6 +12,7 @@ import com.example.hobosigns.models.User;
 
 public class MainActivity extends Activity {
 
+	final public static String Tag= "Hobo Signs";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//check the user is not already logged in:
@@ -34,9 +35,7 @@ public class MainActivity extends Activity {
 				// If valid open up map activity thing
 				User user = new User(null, null, username.getText().toString(),
 						password.getText().toString(), password.getText().toString());
-				user.login(MainActivity.this);
-				Intent i = new Intent(getApplicationContext(), SignMapActivity.class);
-				startActivity(i);				
+				user.login(MainActivity.this);			
 			}
 			
 		});
