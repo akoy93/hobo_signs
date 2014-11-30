@@ -1,15 +1,15 @@
 package com.example.hobosigns;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
@@ -125,15 +125,12 @@ public class CameraActivity extends Activity {
 	    @Override
 	    public void onPictureTaken(byte[] data, Camera camera) {
     		//create intent and pass this picture to it
-		    Intent intent = new Intent(getApplicationContext(), MakePicturePostActivity.class);
-		    intent.putExtra(pictureIntentTag, data);
-		    intent.putExtra(latIntentTag, doubleLatitude);
-		    intent.putExtra(lonIntentTag, doubleLongitude);
-		    startActivity(intent);
-
-		    /** Code to save the image to the phone filesystem
-	        try {
-	         
+	    	File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+	    	if (pictureFile == null){
+	    		Log.d(TAG, "Error creating media file, check storage permissions: ");
+	    		return;
+	    	}
+	    	try {
 	            FileOutputStream fos = new FileOutputStream(pictureFile);
 	            fos.write(data);
 	            fos.close();
@@ -141,7 +138,13 @@ public class CameraActivity extends Activity {
 	            Log.d(TAG, "File not found: " + e.getMessage());
 	        } catch (IOException e) {
 	            Log.d(TAG, "Error accessing file: " + e.getMessage());
-	        }*/
+	        }
+	    	
+		    Intent intent = new Intent(getApplicationContext(), MakePicturePostActivity.class);
+		    intent.putExtra(pictureIntentTag, pictureFile);
+		    intent.putExtra(latIntentTag, doubleLatitude);
+		    intent.putExtra(lonIntentTag, doubleLongitude);
+		    startActivity(intent);
 	    }
 	};
 	

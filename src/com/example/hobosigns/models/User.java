@@ -82,8 +82,7 @@ public class User {
 							throws Exception { 
 						boolean success = jsonObj.getBoolean("success");
 						if(success == true && User.this != null){
-							JSONObject responseObject = jsonObj.getJSONObject("response");
-							String  uniName = responseObject.getString("access_token");
+							String uniName = jsonObj.getString("response");
 							User.this.setAccessToken(uniName);
 							//write the user to app context
 							User.this.saveUserToSharedContext(context);
@@ -94,11 +93,11 @@ public class User {
 						} else {
 							//TODO make toast informing you of failure.
 							Toast.makeText(context, "Failed to log in.", Toast.LENGTH_SHORT).show();
-							Log.i(MainActivity.Tag, "Unsuccessful login");
-							User.this.setAccessToken("mock token");
-							User.this.saveUserToSharedContext(context);
-							Intent i = new Intent(context, SignMapActivity.class);
-							context.startActivity(i);	
+							Log.i(MainActivity.Tag, "Unsuccessful login");		
+							SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+							SharedPreferences.Editor editor = preferencesReader.edit();
+							editor.putString(PREFS_KEY, null);	
+							editor.commit();
 						}
 						return null;
 					}
@@ -147,7 +146,7 @@ public class User {
 			@Override
 			public Integer call(JSONObject jsonObj)
 					throws Exception {
-				boolean success = jsonObj.getBoolean("success");
+				boolean success = jsonObj.getBoolean("response");
 				if(success == true){
 					//start signmap activity
 					Intent intent = new Intent(context, SignMapActivity.class);
@@ -167,14 +166,15 @@ public class User {
 	
 	public static void logout(final Context context){
 		User user = User.getSavedUser(context);
-		if(user == null){return;}
-		List<NameValuePair> params = user.getAsNameValPair();
-		PostAPI post = new PostAPI(logout_extension);
-		SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = preferencesReader.edit();
-		editor.putString(PREFS_KEY, null);	
-		editor.commit();
-		post.execute(params);
+		if(user != null){
+			List<NameValuePair> params = user.getAsNameValPair();
+			PostAPI post = new PostAPI(logout_extension);
+			SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = preferencesReader.edit();
+			editor.putString(PREFS_KEY, null);	
+			editor.commit();
+			post.execute(params);
+		}
 		Intent intent = new Intent(context, MainActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		context.startActivity(intent);

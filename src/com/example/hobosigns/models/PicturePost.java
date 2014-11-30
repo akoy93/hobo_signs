@@ -18,12 +18,13 @@ import android.widget.Toast;
 
 import com.example.hobosigns.rest.MyCallable;
 import com.example.hobosigns.rest.PostAPI;
+import com.example.hobosigns.rest.PostMultipartAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class PicturePost extends Post {
 
-	private byte[] picture;
+	private String file;
 	private static final String add_post_extension ="/add_post";
 	
 	public static Post jsonToPicPost(String jsonString){
@@ -33,11 +34,11 @@ public class PicturePost extends Post {
 		return post;
 	}
 	
-	public PicturePost(byte[] picture, String caption, long postID, String author, 
+	public PicturePost(String file, String caption, long postID, String author, 
 			double lat, double lon, Date date, String mediaType, String locationName, 
 			double distance, String mediaUri) {
 		super(postID, author, lat, lon, date, mediaType, locationName, distance, caption, mediaUri);
-		this.picture = picture;
+		this.file = file;
 	}
 	
 	public static byte[] bitmapToByte(Bitmap bitmap){
@@ -47,27 +48,22 @@ public class PicturePost extends Post {
 	}
 	
 	public Bitmap getBitmapImage(){
-		return BitmapFactory.decodeByteArray(picture , 0, picture.length);
+		return BitmapFactory.decodeFile(file);
 	}
 	
 	private List<NameValuePair> getAsNameValPair(String accessToken){
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Bitmap photo = getBitmapImage();
-		photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-		byte[] imageBytes = baos.toByteArray();
-		String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(5);
     	parameters.add(new BasicNameValuePair("caption", getCaption()));
     	parameters.add(new BasicNameValuePair("longitude", String.valueOf(getLon())));
     	parameters.add(new BasicNameValuePair("latitude", String.valueOf(getLat())));
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
-    	parameters.add(new BasicNameValuePair("image", encodedImage));
+    	parameters.add(new BasicNameValuePair("image", file));
 		return parameters;
 	}
 	
 	public void postPost(final Context context, String accessToken){
 		List<NameValuePair> params = getAsNameValPair(accessToken);
-		PostAPI post = new PostAPI(new MyCallable<Integer>() {
+		PostAPI post = new PostMultipartAPI(new MyCallable<Integer>() {
 
 			@Override
 			public Integer call() throws Exception {return null;}
@@ -89,11 +85,11 @@ public class PicturePost extends Post {
 		post.execute(params);
 	}
 
-	public byte[] getPicture() {
-		return picture;
+	public String getFile() {
+		return file;
 	}
 
-	public void setPicture(byte[] picture) {
-		this.picture = picture;
+	public void setFile(String file) {
+		this.file = file;
 	}
 }

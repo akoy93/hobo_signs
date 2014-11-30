@@ -19,7 +19,7 @@ import android.util.Log;
 public class PostAPI extends AsyncTask<List<NameValuePair>, Void, JSONObject> {
 	
 	public static final String SERVER_URL = "http://104.236.2.144:49170";
-	private static final String TAG = "POST_API";
+	protected static final String TAG = "POST_API";
 	MyCallable<?> whatToDoWithData = null;
 	String extension;
 	
@@ -41,6 +41,7 @@ public class PostAPI extends AsyncTask<List<NameValuePair>, Void, JSONObject> {
 			HttpPost post = new HttpPost(SERVER_URL+extension);
 			if(nameValuePairs != null){
 				post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "utf-8"));
+				client.getParams().setParameter("Content-Type", "application/x-www-form-urlencoded;");
 			}
 			//Perform the request and check the status code
 			HttpResponse response = client.execute(post);

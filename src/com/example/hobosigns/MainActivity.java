@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
 		//check the user is not already logged in:
 		User user = User.getSavedUser(this);
 		if(user != null){
-			user.checkLoggedIn(this);
+			User.checkLoggedIn(this);
 		}
 		//otherwise we make them do so
 		super.onCreate(savedInstanceState);

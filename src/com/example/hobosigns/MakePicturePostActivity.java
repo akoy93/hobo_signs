@@ -1,5 +1,6 @@
 package com.example.hobosigns;
 
+import java.io.File;
 import java.util.Date;
 
 import android.app.Activity;
@@ -24,8 +25,8 @@ public class MakePicturePostActivity extends Activity {
 	        setContentView(R.layout.activity_build_post);
 	        
 	        Intent startingIntent = getIntent();
-	        final byte[] bitmapAsBytes = startingIntent.getByteArrayExtra(CameraActivity.pictureIntentTag);
-	        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapAsBytes, 0, bitmapAsBytes.length);
+	        final File file = (File)startingIntent.getSerializableExtra(CameraActivity.pictureIntentTag);
+	        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 	        final double latitude = startingIntent.getDoubleExtra(CameraActivity.latIntentTag, 0);
 	        final double longitude = startingIntent.getDoubleExtra(CameraActivity.lonIntentTag, 0);
 	        //get linear layout and add this bitmap to it
@@ -46,7 +47,7 @@ public class MakePicturePostActivity extends Activity {
 	        		    Date now = new Date();
 	        		    User user = User.getSavedUser(v.getContext());
 	        		    //create and post the sign
-	        		    PicturePost picturePost = new PicturePost(bitmapAsBytes,caption.getText().toString(), 0L, 
+	        		    PicturePost picturePost = new PicturePost(file.getAbsolutePath(),caption.getText().toString(), 0L, 
 	        		    		user.getUsername(), latitude, longitude, now, "Picture", null, 0, null);
 	        		    picturePost.postPost(getApplicationContext(), user.getAccessToken());
 	        		    Intent intent = new Intent(MakePicturePostActivity.this, SignMapActivity.class);

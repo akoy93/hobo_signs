@@ -70,7 +70,7 @@ public class Post {
 		this.mediaType = mediaType;
 		this.locationName = locationName;
 		this.distance = distance;
-		this.setCaption(caption);
+		this.setCaption((caption!=null?caption:"default"));
 	}
 
 	public static void getMyPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon){  
