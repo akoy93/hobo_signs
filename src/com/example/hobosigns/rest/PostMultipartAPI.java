@@ -48,7 +48,7 @@ public class PostMultipartAPI extends PostAPI {
 			    } 
 			    else {
 			        if (nameValuePair.getValue()!=null) {
-		                builder.addPart(nameValuePair.getName(), new StringBody(nameValuePair.getValue(), ContentType.create(HTTP.PLAIN_TEXT_TYPE, HTTP.UTF_8)));
+		                builder.addPart(nameValuePair.getName(), new StringBody((String)nameValuePair.getValue()));
 			        }
 			    }
 			}
