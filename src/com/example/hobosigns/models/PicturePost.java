@@ -1,88 +1,99 @@
 package com.example.hobosigns.models;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Date;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.example.hobosigns.rest.MyCallable;
 import com.example.hobosigns.rest.PostAPI;
-import com.example.hobosigns.rest.PostMultipartAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.http.Part;
+import retrofit.http.POST;
+import retrofit.http.Multipart;
+import retrofit.mime.TypedFile;
+
+class Response {
+	boolean success;
+	String error;
+	String response;
+}
+
+interface HoboSignsService {
+	@Multipart
+	@POST("/add_post")
+	void addPost(@Part("image") TypedFile image,
+			@Part("access_token") String accessToken,
+			@Part("caption") String caption, @Part("latitude") double latitude,
+			@Part("longitude") double longitude, Callback<Response> callback);
+}
 
 public class PicturePost extends Post {
 
 	private String file;
-	private static final String add_post_extension ="/add_post";
-	
-	public static Post jsonToPicPost(String jsonString){
+
+	public static Post jsonToPicPost(String jsonString) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		Gson gson = gsonBuilder.create();
 		PicturePost post = gson.fromJson(jsonString, PicturePost.class);
 		return post;
 	}
-	
-	public PicturePost(String file, String caption, long postID, String author, 
-			double lat, double lon, Date date, String mediaType, String locationName, 
-			double distance, String mediaUri) {
-		super(postID, author, lat, lon, date, mediaType, locationName, distance, caption, mediaUri);
+
+	public PicturePost(String file, String caption, long postID, String author,
+			double lat, double lon, Date date, String mediaType,
+			String locationName, double distance, String mediaUri) {
+		super(postID, author, lat, lon, date, mediaType, locationName,
+				distance, caption, mediaUri);
 		this.file = file;
 	}
-	
-	public static byte[] bitmapToByte(Bitmap bitmap){
-    	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    	bitmap.compress(CompressFormat.JPEG, 100, stream);
-	    return stream.toByteArray();
+
+	public static byte[] bitmapToByte(Bitmap bitmap) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bitmap.compress(CompressFormat.JPEG, 100, stream);
+		return stream.toByteArray();
 	}
-	
-	public Bitmap getBitmapImage(){
+
+	public Bitmap getBitmapImage() {
 		return BitmapFactory.decodeFile(file);
 	}
-	
-	private List<NameValuePair> getAsNameValPair(String accessToken){
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>(5);
-    	parameters.add(new BasicNameValuePair("caption", getCaption()));
-    	parameters.add(new BasicNameValuePair("longitude", String.valueOf(getLon())));
-    	parameters.add(new BasicNameValuePair("latitude", String.valueOf(getLat())));
-    	parameters.add(new BasicNameValuePair("access_token", accessToken));
-    	parameters.add(new BasicNameValuePair("image", file));
-		return parameters;
-	}
-	
-	public void postPost(final Context context, String accessToken){
-		List<NameValuePair> params = getAsNameValPair(accessToken);
-		PostAPI post = new PostMultipartAPI(new MyCallable<Integer>() {
 
-			@Override
-			public Integer call() throws Exception {return null;}
+	public void postPost(final Context context, String accessToken) {
+		RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(
+				PostAPI.SERVER_URL).build();
+		HoboSignsService service = restAdapter.create(HoboSignsService.class);
 
-			@Override
-			public Integer call(JSONObject jsonObj) throws Exception {
-				if(context != null){
-					boolean success = jsonObj.getBoolean("success");
-					if(success){
-						Toast.makeText(context, "Sign has been posted", Toast.LENGTH_SHORT).show();
-					} else{
-						Toast.makeText(context, "Failed to upload sign", Toast.LENGTH_SHORT).show();
+		service.addPost(new TypedFile("image/jpeg", new File(file)),
+				accessToken, this.getCaption(), this.getLat(), this.getLon(),
+				new Callback<Response>() {
+
+					@Override
+					public void failure(RetrofitError e) {
+						Log.e("postPost", e.toString());
 					}
-				}
-				return null;
-			}
-			
-		}, add_post_extension);
-		post.execute(params);
+
+					@Override
+					public void success(Response res,
+							retrofit.client.Response arg1) {
+						if (res.success) {
+							Toast.makeText(context, "Sign has been posted",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(context, res.error,
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+
+				});
 	}
 
 	public String getFile() {

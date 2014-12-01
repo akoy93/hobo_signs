@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="18"
+        android:minSdkVersion="16"
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -39,7 +39,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,16 +49,19 @@
         </activity>
         <activity
             android:name=".SignMapActivity"
-            android:label="@string/title_activity_sign_map" >
+            android:label="@string/title_activity_sign_map"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".MakePicturePostActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         
         <activity android:name=".CameraActivity"
           android:label="@string/app_name"
-          android:screenOrientation="portrait">
+          android:screenOrientation="portrait"
+          android:theme="@android:style/Theme.NoTitleBar">
           <!-- <intent-filter>
 		        <action android:name="android.intent.action.MAIN" />
 		        <category android:name="android.intent.category.LAUNCHER" />
@@ -69,15 +73,17 @@
     
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCFgCvuqUdEL5gHIQwPTejL7VHIbUJLF68" />
+            android:value="AIzaSyCqqlyz0mMA3qOkowfnP9CXoxrZ32y9Hww" />
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings" 
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".MySignsActivity"
-            android:label="@string/title_activity_my_signs" >
+            android:label="@string/title_activity_my_signs"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -27,11 +28,18 @@ public class MakePicturePostActivity extends Activity {
 	        Intent startingIntent = getIntent();
 	        final File file = (File)startingIntent.getSerializableExtra(CameraActivity.pictureIntentTag);
 	        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+	        
+	        Matrix matrix = new Matrix();
+	        matrix.postRotate(90);
+	        Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, 
+	                                      bitmap.getWidth(), bitmap.getHeight(), 
+	                                      matrix, true);
+	        
 	        final double latitude = startingIntent.getDoubleExtra(CameraActivity.latIntentTag, 0);
 	        final double longitude = startingIntent.getDoubleExtra(CameraActivity.lonIntentTag, 0);
 	        //get linear layout and add this bitmap to it
 	        LinearLayout backgroundLayout = (LinearLayout) findViewById(R.id.image_background);
-	        BitmapDrawable background = new BitmapDrawable(getResources(), bitmap);
+	        BitmapDrawable background = new BitmapDrawable(getResources(), rotated);
 	        backgroundLayout.setBackground(background);
 	        EditText caption = (EditText) findViewById(R.id.post_text);
 	        caption.requestFocus();	        	        

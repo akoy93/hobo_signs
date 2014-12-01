@@ -32,6 +32,7 @@
 
     <!-- My Signs -->
     <string name="title_activity_my_signs">MySignsActivity</string>
-    
+
+    <string name="Capture">Capture</string>
 
 </resources>
