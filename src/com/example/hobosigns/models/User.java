@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hobosigns.LoginActivity;
 import com.example.hobosigns.MainActivity;
 import com.example.hobosigns.SignMapActivity;
 import com.example.hobosigns.rest.GetAPI;
@@ -137,7 +138,11 @@ public class User {
 	
 	public static void checkLoggedIn(final Context context){
 		User user = User.getSavedUser(context);
-		if(user == null){return;}
+		if(user == null){
+			// Start a login activity
+			Intent intent = new Intent(context,LoginActivity.class);
+			context.startActivity(intent);
+		}
 		List<NameValuePair> params = user.getAsNameValPair();
 		GetAPI get = new GetAPI(new MyCallable<Integer>(){
 			@Override
@@ -156,6 +161,9 @@ public class User {
 					SharedPreferences.Editor editor = preferencesReader.edit();
 					editor.putString(PREFS_KEY, null);	
 					editor.commit();
+					// Start a login activity
+					Intent intent = new Intent(context,LoginActivity.class);
+					context.startActivity(intent);
 				}
 				return null;
 			}
@@ -175,7 +183,7 @@ public class User {
 			editor.commit();
 			post.execute(params);
 		}
-		Intent intent = new Intent(context, MainActivity.class);
+		Intent intent = new Intent(context, LoginActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		context.startActivity(intent);
 	}

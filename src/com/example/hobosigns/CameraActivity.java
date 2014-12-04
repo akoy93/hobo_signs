@@ -12,11 +12,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -24,14 +28,17 @@ import android.widget.Toast;
 public class CameraActivity extends Activity {
 
 	private Camera mCamera;
+	private MediaRecorder mMediaRecorder;
 	private Preview mPreview;
 	public static final int MEDIA_TYPE_IMAGE = 1;
+	public static final int MEDIA_TYPE_VIDEO = 2;
 	protected static final String TAG = "Camera Error:";
 	public static final String latIntentTag = "Langitude";
 	public static final String lonIntentTag = "Latitude";
 	public static final String pictureIntentTag = "Picture";
 	private double doubleLatitude;
 	private double doubleLongitude;
+	private boolean isRecording = false;
 	
 	// Max picture dimensions
 	final static int MAX_WIDTH = 1080;
@@ -76,6 +83,40 @@ public class CameraActivity extends Activity {
 
 		// Add a listener to the Capture button
 		Button captureButton = (Button) findViewById(R.id.button_capture);
+		captureButton.setOnTouchListener(new OnTouchListener() {
+		     @Override
+		     public boolean onTouch(View v, MotionEvent event) {
+		         if(event.getAction() == MotionEvent.ACTION_UP && isRecording){
+		                 // stop recording and release camera
+		                 mMediaRecorder.stop();  // stop the recording
+		                 releaseMediaRecorder(); // release the MediaRecorder object
+		                 mCamera.lock();         // take camera access back from MediaRecorder
+		                 isRecording = false;
+		                 //start a new activity to post the video to the server.
+		                 return true;
+		             }
+		         	 return false;
+		          }
+		     }
+	     );
+		captureButton.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+                if (prepareVideoRecorder()) {
+                    // Camera is available and unlocked, MediaRecorder is prepared,
+                    // now you can start recording
+                    mMediaRecorder.start();
+                    isRecording = true;
+                } else {
+                    // prepare didn't work, release the camera
+                    releaseMediaRecorder();
+                    // inform user
+                    Toast.makeText(CameraActivity.this, "Unable to start recording", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+			}
+		});
 		captureButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -233,4 +274,51 @@ public class CameraActivity extends Activity {
 		return mediaFile;
 	}
 
+	/** Media Recorder Helper methods**/
+	private boolean prepareVideoRecorder(){
+
+	    mCamera = getCameraInstance();
+	    mMediaRecorder = new MediaRecorder();
+
+	    // Step 1: Unlock and set camera to MediaRecorder
+	    mCamera.unlock();
+	    mMediaRecorder.setCamera(mCamera);
+
+	    // Step 2: Set sources
+	    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+	    // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+	    mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+
+	    // Step 4: Set output file
+	    mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+
+	    // Step 5: Set the preview output
+	    mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+
+	    // Step 6: Prepare configured MediaRecorder
+	    try {
+	        mMediaRecorder.prepare();
+	    } catch (IllegalStateException e) {
+	        Log.d(TAG, "IllegalStateException preparing MediaRecorder: " + e.getMessage());
+	        releaseMediaRecorder();
+	        return false;
+	    } catch (IOException e) {
+	        Log.d(TAG, "IOException preparing MediaRecorder: " + e.getMessage());
+	        releaseMediaRecorder();
+	        return false;
+	    }
+	    return true;
+	}
+	
+	  private void releaseMediaRecorder(){
+	        if (mMediaRecorder != null) {
+	            mMediaRecorder.reset();   // clear recorder configuration
+	            mMediaRecorder.release(); // release the recorder object
+	            mMediaRecorder = null;
+	            mCamera.lock();           // lock camera for later use
+	        }
+	    }
+	
 }

@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -31,8 +33,25 @@ public class MakePicturePostActivity extends Activity {
 	        
 	        Matrix matrix = new Matrix();
 	        matrix.postRotate(90);
-	        Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, 
-	                                      bitmap.getWidth(), bitmap.getHeight(), 
+	        
+	        //Get screen dimensions
+	        Display display = getWindowManager().getDefaultDisplay();
+	        Point size = new Point();
+	        display.getSize(size);
+	        int screenWidth = size.y;
+	        
+	        //original dimensions
+	        int origWidth = bitmap.getWidth();
+	        int origHeight = bitmap.getHeight();
+	        
+	        // Pick picture dimensions
+	        int dispWidth = screenWidth <= origWidth? screenWidth : origWidth;
+    		int dispHeight = (int) ((((float)dispWidth)/((float)origWidth))*((float)origHeight));
+    		
+    		Bitmap scaled = Bitmap.createScaledBitmap(bitmap, dispWidth, dispHeight, true);
+	        
+	        Bitmap rotated = Bitmap.createBitmap(scaled, 0, 0, 
+	                                      dispWidth, dispHeight, 
 	                                      matrix, true);
 	        
 	        final double latitude = startingIntent.getDoubleExtra(CameraActivity.latIntentTag, 0);
@@ -44,7 +63,6 @@ public class MakePicturePostActivity extends Activity {
 	        EditText caption = (EditText) findViewById(R.id.post_text);
 	        caption.requestFocus();	        	        
 	        
-	        // TODO: make a button to cancel the opperation, send the user back with a failure intent
 	        // Add a listener to the Capture button
 	        Button captureButton = (Button) findViewById(R.id.button_send_post);
 	        captureButton.setOnClickListener(

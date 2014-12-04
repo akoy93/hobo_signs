@@ -20,24 +20,8 @@ public class MainActivity extends Activity {
 		if(user != null){
 			User.checkLoggedIn(this);
 		}
-		//otherwise we make them do so
+		// we just wait until we find out from the network
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
-		final EditText username = (EditText) findViewById(R.id.username_field);
-		final EditText password = (EditText) findViewById(R.id.password_field);
-		
-		final Button loginButton = (Button) findViewById(R.id.login_button);
-		loginButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				// Check username and password stuff
-				// If valid open up map activity thing
-				User user = new User(null, null, username.getText().toString(),
-						password.getText().toString(), password.getText().toString());
-				user.login(MainActivity.this);			
-			}
-			
-		});
+		setContentView(R.layout.activity_load);
 	}
 }
