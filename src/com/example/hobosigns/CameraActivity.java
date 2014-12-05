@@ -93,6 +93,7 @@ public class CameraActivity extends Activity {
 		                 mCamera.lock();         // take camera access back from MediaRecorder
 		                 isRecording = false;
 		                 //start a new activity to post the video to the server.
+		                 Log.i(MainActivity.Tag, "done recording video");
 		                 return true;
 		             }
 		         	 return false;
@@ -107,6 +108,7 @@ public class CameraActivity extends Activity {
                     // Camera is available and unlocked, MediaRecorder is prepared,
                     // now you can start recording
                     mMediaRecorder.start();
+	                Log.i(MainActivity.Tag, "Now recording video");
                     isRecording = true;
                 } else {
                     // prepare didn't work, release the camera
@@ -138,6 +140,7 @@ public class CameraActivity extends Activity {
 		mPreview = new Preview(this, mCamera);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
+		super.onRestart();
 	}
 
 	private boolean checkCameraHardware() {
@@ -226,11 +229,13 @@ public class CameraActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+        releaseMediaRecorder();   
 		releaseCamera(); // release the camera immediately on pause event
 	}
 
 	private void releaseCamera() {
 		if (mCamera != null) {
+			mPreview.getHolder().removeCallback(mPreview);
 			mCamera.release(); // release the camera for other applications
 			mCamera = null;
 		}
@@ -267,7 +272,10 @@ public class CameraActivity extends Activity {
 		if (type == MEDIA_TYPE_IMAGE) {
 			mediaFile = new File(mediaStorageDir.getPath() + File.separator
 					+ "IMG_" + timeStamp + ".jpg");
-		} else {
+		} else if(type == MEDIA_TYPE_VIDEO) {
+	        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+	        "VID_"+ timeStamp + ".mp4");
+	    } else {
 			return null;
 		}
 
@@ -276,8 +284,6 @@ public class CameraActivity extends Activity {
 
 	/** Media Recorder Helper methods**/
 	private boolean prepareVideoRecorder(){
-
-	    mCamera = getCameraInstance();
 	    mMediaRecorder = new MediaRecorder();
 
 	    // Step 1: Unlock and set camera to MediaRecorder
@@ -289,7 +295,7 @@ public class CameraActivity extends Activity {
 	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
 	    // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-	    mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+	    mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
 
 	    // Step 4: Set output file
 	    mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());

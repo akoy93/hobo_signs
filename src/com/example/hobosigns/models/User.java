@@ -142,6 +142,7 @@ public class User {
 			// Start a login activity
 			Intent intent = new Intent(context,LoginActivity.class);
 			context.startActivity(intent);
+			return;
 		}
 		List<NameValuePair> params = user.getAsNameValPair();
 		GetAPI get = new GetAPI(new MyCallable<Integer>(){
