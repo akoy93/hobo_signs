@@ -14,6 +14,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.MediaRecorder.OnInfoListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,9 +37,11 @@ public class CameraActivity extends Activity {
 	public static final String latIntentTag = "Langitude";
 	public static final String lonIntentTag = "Latitude";
 	public static final String pictureIntentTag = "Picture";
+	public static final String videoIntentTag = "Video";
 	private double doubleLatitude;
 	private double doubleLongitude;
 	private boolean isRecording = false;
+	private String mOutputFile;
 	
 	// Max picture dimensions
 	final static int MAX_WIDTH = 1080;
@@ -94,6 +97,11 @@ public class CameraActivity extends Activity {
 		                 isRecording = false;
 		                 //start a new activity to post the video to the server.
 		                 Log.i(MainActivity.Tag, "done recording video");
+		                 Intent intent = new Intent(CameraActivity.this, MakeVideoPostActivity.class);
+			     			intent.putExtra(videoIntentTag, mOutputFile);
+			    			intent.putExtra(latIntentTag, doubleLatitude);
+			    			intent.putExtra(lonIntentTag, doubleLongitude);
+		                 startActivity(intent);
 		                 return true;
 		             }
 		         	 return false;
@@ -291,18 +299,38 @@ public class CameraActivity extends Activity {
 	    mMediaRecorder.setCamera(mCamera);
 
 	    // Step 2: Set sources
-	    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+	    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
 	    mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
 	    // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
 	    mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
 
 	    // Step 4: Set output file
-	    mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+	    mOutputFile = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
+	    mMediaRecorder.setOutputFile(mOutputFile);
 
 	    // Step 5: Set the preview output
 	    mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
-
+	    mMediaRecorder.setOrientationHint(90);
+	    
+	    mMediaRecorder.setMaxDuration(8000);
+	    mMediaRecorder.setOnInfoListener(new OnInfoListener(){   
+	    	public void onInfo(MediaRecorder mr, int what, int extra) { 
+	        if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+	            Log.v("VIDEOCAPTURE","Maximum Duration Reached"); 
+                releaseMediaRecorder(); // release the MediaRecorder object
+                mCamera.lock();         // take camera access back from MediaRecorder
+                isRecording = false;
+                //start a new activity to post the video to the server.
+                Log.i(MainActivity.Tag, "done recording video");
+                Intent intent = new Intent(CameraActivity.this, MakeVideoPostActivity.class);
+     			intent.putExtra(videoIntentTag, mOutputFile);
+    			intent.putExtra(latIntentTag, doubleLatitude);
+    			intent.putExtra(lonIntentTag, doubleLongitude);
+                startActivity(intent);
+	         }
+	      }});
+	    
 	    // Step 6: Prepare configured MediaRecorder
 	    try {
 	        mMediaRecorder.prepare();

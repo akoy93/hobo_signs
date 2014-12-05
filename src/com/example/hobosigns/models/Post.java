@@ -10,12 +10,33 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import retrofit.Callback;
+import retrofit.http.Multipart;
+import retrofit.http.POST;
+import retrofit.http.Part;
+import retrofit.mime.TypedFile;
+
 import com.example.hobosigns.rest.GetAPI;
 import com.example.hobosigns.rest.MyCallable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
+
+class Response {
+	boolean success;
+	String error;
+	String response;
+}
+
+interface HoboSignsService {
+	@Multipart
+	@POST("/add_post")
+	void addPost(@Part("image") TypedFile image,
+			@Part("access_token") String accessToken,
+			@Part("caption") String caption, @Part("latitude") double latitude,
+			@Part("longitude") double longitude, Callback<Response> callback);
+}
 
 public class Post {
 

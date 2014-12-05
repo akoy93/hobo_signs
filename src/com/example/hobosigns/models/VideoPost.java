@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
-public class PicturePost extends Post {
+public class VideoPost extends Post {
 
 	private String file;
 
@@ -31,7 +31,7 @@ public class PicturePost extends Post {
 		return post;
 	}
 
-	public PicturePost(String file, String caption, long postID, String author,
+	public VideoPost(String file, String caption, long postID, String author,
 			double lat, double lon, Date date, String mediaType,
 			String locationName, double distance, String mediaUri) {
 		super(postID, author, lat, lon, date, mediaType, locationName,
@@ -54,28 +54,27 @@ public class PicturePost extends Post {
 				PostAPI.SERVER_URL).build();
 		HoboSignsService service = restAdapter.create(HoboSignsService.class);
 
-		service.addPost(new TypedFile("image/jpeg", new File(file)),
-				accessToken, this.getCaption(), this.getLat(), this.getLon(),
-				new Callback<Response>() {
+		service.addPost(new TypedFile("video/mp4", new File(file)),
+			accessToken, this.getCaption(), this.getLat(), this.getLon(),
+			new Callback<Response>() {
 
-					@Override
-					public void failure(RetrofitError e) {
-						Log.e("postPost", e.toString());
-					}
+				@Override
+				public void failure(RetrofitError e) {
+					Log.e("postPost", e.toString());
+				}
 
-					@Override
-					public void success(Response res,
-							retrofit.client.Response arg1) {
-						if (res.success) {
-							Toast.makeText(context, "Sign has been posted",
+				@Override
+				public void success(Response res,
+						retrofit.client.Response arg1) {
+					if (res.success) {
+						Toast.makeText(context, "Sign has been posted",
 									Toast.LENGTH_SHORT).show();
-						} else {
-							Toast.makeText(context, res.error,
-									Toast.LENGTH_SHORT).show();
-						}
+					} else {
+						Toast.makeText(context, res.error,
+								Toast.LENGTH_SHORT).show();
 					}
-
-				});
+				}
+		});
 	}
 
 	public String getFile() {

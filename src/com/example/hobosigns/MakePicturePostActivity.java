@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.VideoView;
 
 import com.example.hobosigns.models.PicturePost;
 import com.example.hobosigns.models.User;
@@ -26,6 +27,10 @@ public class MakePicturePostActivity extends Activity {
 	 public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.activity_build_post);
+	        
+	        //Remove video view
+	        VideoView vidView = (VideoView) findViewById(R.id.VideoView);
+	        vidView.setVisibility(View.GONE);
 	        
 	        Intent startingIntent = getIntent();
 	        final File file = (File)startingIntent.getSerializableExtra(CameraActivity.pictureIntentTag);
