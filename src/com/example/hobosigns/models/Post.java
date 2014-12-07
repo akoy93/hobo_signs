@@ -58,6 +58,8 @@ public class Post {
 	private String locationName;
 	private String caption;
 	private double distance;
+	private String hashtags;
+	
 	private static final String get_mine_extension ="/my_posts";
 	private static final String get_hashtagged_extension ="/get_posts_with_hashtag";
 	private static final String get_hashtags_extension ="/hashtags";
@@ -65,6 +67,7 @@ public class Post {
 	
 	public static Post jsonToPost(String jsonString){
 		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.setDateFormat("yyyy-MM-dd hh:mm:ss.SSSSSS z");
 		Gson gson = gsonBuilder.create();
 		Post post = gson.fromJson(jsonString, Post.class);
 		return post;
@@ -93,6 +96,22 @@ public class Post {
 		this.distance = distance;
 		this.setCaption((caption!=null?caption:"default"));
 	}
+	
+	public Post(long postID, String author, double lat, double lon, Date date,
+			String mediaType, String locationName, double distance, String caption, String mediaUri, String hashtags) {
+		super();
+		this.postID = postID;
+		this.author = author;
+		this.lat = lat;
+		this.lon = lon;
+		this.date = date;
+		this.mediaUri = mediaUri;
+		this.mediaType = mediaType;
+		this.locationName = locationName;
+		this.distance = distance;
+		this.setCaption((caption!=null?caption:"default"));
+		this.hashtags = hashtags;
+	}
 
 	public static void getMyPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(3);
@@ -108,7 +127,7 @@ public class Post {
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
     	parameters.add(new BasicNameValuePair("latitude", String.valueOf(lat)));
     	parameters.add(new BasicNameValuePair("longitude", String.valueOf(lon)));
-    	parameters.add(new BasicNameValuePair("range", String.valueOf(range)));
+    	parameters.add(new BasicNameValuePair("radius", String.valueOf(range)));
 		GetAPI get = new GetAPI(onResponseMethod, get_range_extension);
 		get.execute(parameters);
 	}
@@ -199,5 +218,21 @@ public class Post {
 
 	public void setCaption(String caption) {
 		this.caption = caption;
+	}
+	
+	public String getHashtags() {
+		return hashtags;
+	}
+
+	public void setHashtags(String hashtags) {
+		this.hashtags = hashtags;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+		if (this.getClass() != other.getClass()) return false;
+		if (this.postID != ((Post) other).postID) return false;
+		return true;
 	}
 }

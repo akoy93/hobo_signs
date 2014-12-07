@@ -26,14 +26,16 @@
     <!-- User Settings -->
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="curr_username_label">Username:</string>
-    <string name="radius_label">Search Radius:</string>
+    <string name="radius_label">Search Radius in Meters:</string>
     <string name="cancel_button">Cancel</string>
     <string name="save_button">Save Changes</string>
 
     <!-- My Signs -->
     <string name="title_activity_my_signs">MySignsActivity</string>
 
-    <string name="filter_footer_text">Reset Filters</string>
+    <!-- Filters -->
+    <string name="filter_apply_button">Apply Filters</string>
+    <string name="filter_reset_button">Reset Filters</string>
     
     
     <string name="Capture">Capture</string>

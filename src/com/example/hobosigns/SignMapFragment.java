@@ -1,26 +1,30 @@
 package com.example.hobosigns;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.hobosigns.models.Post;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class SignMapFragment extends Fragment {
@@ -29,15 +33,22 @@ public class SignMapFragment extends Fragment {
 	
 	private MapView mapView;
 	private GoogleMap map;
-	private Activity parent;
+	private SignMapActivity parent;
 	
-	public SignMapFragment(Activity parent) {
+	private ArrayList<Marker> markers;
+	private HashMap<Marker, Post> markerToPost;
+	
+	public SignMapFragment(SignMapActivity parent) {
 		this.parent = parent;
+		markers = new ArrayList<Marker>();
+		markerToPost = new HashMap<Marker, Post>();
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		MapsInitializer.initialize(parent);
 	}
 	
 
@@ -54,41 +65,46 @@ public class SignMapFragment extends Fragment {
 		
 		int avail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(parent);
 		
-		if (avail == ConnectionResult.SUCCESS || avail == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {
+		if (avail == ConnectionResult.SUCCESS ) {
 			Log.i(TAG, "Google services are available");
-			
-			MapsInitializer.initialize(this.getActivity());
 			
 			// Gets the MapView from the XML layout and creates it
 	        MapView mapView = (MapView) view.findViewById(R.id.map_view);
 	        mapView.onCreate(savedInstanceState);
-	        Log.i(TAG, "MapView is " + ((mapView == null) ? "null" : "NOT null"));
+	        // Log.i(TAG, "MapView is " + ((mapView == null) ? "null" : "NOT null"));
 	        
 	        // Gets to GoogleMap from the MapView and does initialization stuff
 	        map = mapView.getMap();
-	        Log.i(TAG, "Map is " + ((map == null) ? "null" : "NOT null"));
+	        // Log.i(TAG, "Map is " + ((map == null) ? "null" : "NOT null"));
 	        
 	        if (map != null) {
 	        	map.getUiSettings().setMyLocationButtonEnabled(false);
+	        	map.getUiSettings().setZoomControlsEnabled(true);
 	        	map.setMyLocationEnabled(true);
 	        	
 	        	// Updates the location and zoom of the MapView
-		        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 4);
-		        map.animateCamera(cameraUpdate);
-		        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(43.1, -87.9)));
-		        map.animateCamera(CameraUpdateFactory.zoomTo(3));
+		        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(39.0, -77.0)));
+		        map.animateCamera(CameraUpdateFactory.zoomTo(4));
 		        
-		        map.addMarker(new MarkerOptions()
-
+		        parent.updatePosts();
+		        
+		        /*markers.add(map.addMarker(new MarkerOptions()
 				// Set the Marker's position
-						.position(new LatLng(43.1, -87.9))
-
+						.position(new LatLng(39.0, -77.0))
 						// Set the title of the Marker's information window
 						.title("Test")
-
 						// Set the color for the Marker
 						.icon(BitmapDescriptorFactory
-								.defaultMarker()));
+								.defaultMarker())));*/
+		        
+		        map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+					@Override
+					public void onInfoWindowClick(Marker m) {
+						// Can launch Sign View activity from here?
+						Post p = markerToPost.get(m);
+						Toast.makeText(parent, p.getLocationName(), Toast.LENGTH_SHORT).show();
+					}
+				});
 	        }
 		} else {
 			Log.i(TAG, "Google services are NOT available");
@@ -105,6 +121,27 @@ public class SignMapFragment extends Fragment {
 		});
 		
 		return view;	
+	}
+	
+	public void resetMarkers() {
+		for (Marker m : markers) {
+			m.remove();
+		}
+		markers.clear();
+		markerToPost.clear();
+	}
+	
+	public void updateMarkers() {
+		for (Post p : parent.posts) {
+			Marker m = map.addMarker(new MarkerOptions()
+					.position(new LatLng(p.getLat(), p.getLon()))
+					.title(p.getAuthor().trim() + ": " + p.getCaption().trim())
+					.icon(BitmapDescriptorFactory
+							.defaultMarker()));
+			markers.add(m);
+			markerToPost.put(m, p);
+			Log.i(TAG, "Adding post " + p.getPostID());
+		}
 	}
 	
 	@Override
