@@ -31,6 +31,7 @@ public class SignMapListFragment extends Fragment {
 	public SignMapListFragment(SignMapActivity parent) {
 		this.parent = parent;
 		list = parent.posts;
+		this.adapter = new SignListAdapter();
 	}
 
 	@Override
@@ -44,14 +45,10 @@ public class SignMapListFragment extends Fragment {
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		parent.updatePosts();
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {		
 		View view = inflater.inflate(R.layout.fragment_sign_list, container, false);
 		
 		ListView list = (ListView) view.findViewById(R.id.sign_list);
-		// list.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, SIGNS));
-		adapter = new SignListAdapter();
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -133,6 +130,11 @@ public class SignMapListFragment extends Fragment {
 			});*/
 			
 			return view;
+		}
+		
+		public void update(ArrayList<Post> posts) {
+			list = posts;
+			this.notifyDataSetChanged();
 		}
 		
 	}

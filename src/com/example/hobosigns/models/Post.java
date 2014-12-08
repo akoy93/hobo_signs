@@ -266,5 +266,10 @@ public class Post {
 
 	public void setMy_vote(int my_vote) {
 		this.my_vote = my_vote;
+	}	
+
+	@Override
+	public int hashCode() {
+		return (int) this.postID;
 	}
 }
