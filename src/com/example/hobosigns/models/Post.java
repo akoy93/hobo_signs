@@ -132,19 +132,23 @@ public class Post {
 		get.execute(parameters);
 	}
 	
-	public static void getHashtaggedPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, String hashtag){  
+	public static void getHashtaggedPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range, String hashtag){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
     	parameters.add(new BasicNameValuePair("latitude", String.valueOf(lat)));
     	parameters.add(new BasicNameValuePair("longitude", String.valueOf(lon)));
+    	parameters.add(new BasicNameValuePair("radius", String.valueOf(range)));
     	parameters.add(new BasicNameValuePair("hashtag", hashtag));
 		GetAPI get = new GetAPI(onResponseMethod, get_hashtagged_extension);
 		get.execute(parameters);
 	}
 	
-	public static void getAvailableHashtags(MyCallable<?> onResponseMethod, String accessToken){  
+	public static void getAvailableHashtags(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
+    	parameters.add(new BasicNameValuePair("latitude", String.valueOf(lat)));
+    	parameters.add(new BasicNameValuePair("longitude", String.valueOf(lon)));
+    	parameters.add(new BasicNameValuePair("radius", String.valueOf(range)));
 		GetAPI get = new GetAPI(onResponseMethod, get_hashtags_extension);
 		get.execute(parameters);
 	}

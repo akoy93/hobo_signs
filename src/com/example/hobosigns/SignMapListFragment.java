@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -52,6 +52,14 @@ public class SignMapListFragment extends Fragment {
 		// list.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, SIGNS));
 		adapter = new SignListAdapter();
 		list.setAdapter(adapter);
+		list.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> par, View view, int pos, long id) {
+				Post post = (Post) adapter.getItem(pos);
+				Toast.makeText(parent, post.getLocationName(), Toast.LENGTH_SHORT).show();
+			}
+			
+		});
 		
 		Button b = (Button) view.findViewById(R.id.list_drop_sign_button);
 		b.setOnClickListener(new OnClickListener() {
@@ -102,13 +110,13 @@ public class SignMapListFragment extends Fragment {
 			
 			final TextView t = (TextView) view.findViewById(R.id.item_text);
 			t.setText(post.getPostID() + " " + post.getAuthor().trim() + ": " + post.getCaption().trim());
-			t.setOnClickListener(new OnClickListener() {
+			/*t.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					// Launch Sign View activity here with post?
 					Toast.makeText(parent, post.getLocationName(), Toast.LENGTH_SHORT).show();
 				}
-			});
+			});*/
 			
 			return view;
 		}

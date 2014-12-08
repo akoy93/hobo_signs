@@ -65,7 +65,7 @@ public class SignMapFragment extends Fragment {
 		
 		int avail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(parent);
 		
-		if (avail == ConnectionResult.SUCCESS ) {
+		if (avail == ConnectionResult.SUCCESS) {
 			Log.i(TAG, "Google services are available");
 			
 			// Gets the MapView from the XML layout and creates it

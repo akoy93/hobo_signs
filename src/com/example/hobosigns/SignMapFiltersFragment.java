@@ -82,42 +82,54 @@ public class SignMapFiltersFragment extends Fragment {
 			}
 		});
 		
-		Post.getAvailableHashtags(new MyCallable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				return null;
-			}
-
-			@Override
-			public Void call(JSONObject jsonObject) throws Exception {
-				JSONArray arr = jsonObject.getJSONArray("response");
-				Log.i("Get All Hashtags", arr.toString());
-				
-				for (int i = 0; i < arr.length(); i++) {
-					JSONObject o = arr.getJSONObject(i);
-					String tag = o.getString("hashtag");
-					int num_posts = o.getInt("num_posts");
-					
-					adapter.add(tag, num_posts);
-					
-					Log.i("Filters", tag + ": " + num_posts);
-				}
-				
-				adapter.setupCheckedSavedTags();
-				
-				return null;
-			}
-			
-		}, User.getSavedUser(parent).getAccessToken());
+		getHashtags();
 		
 		return view;
 	}
 
-	
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+	}
+	
+	private void getHashtags() {
+		if (parent.gps.canGetLocation()) {
+			parent.gps.getLocation();
+			double lat = parent.gps.getLatitude();
+			double lng = parent.gps.getLongitude();
+			int rad = parent.preferencesReader.getInt(SettingsActivity.RADIUS_KEY, 1000000);
+			
+			Log.i("Get All Hashtags", "Lat: " + lat + ", Lng: " + lng + ", Radius: " + rad);
+		
+			Post.getAvailableHashtags(new MyCallable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					return null;
+				}
+
+				@Override
+				public Void call(JSONObject jsonObject) throws Exception {
+					Log.i("Get All Hashtags", jsonObject.toString());
+					JSONArray arr = jsonObject.getJSONArray("response");
+					Log.i("Get All Hashtags", arr.toString());
+					
+					for (int i = 0; i < arr.length(); i++) {
+						JSONObject o = arr.getJSONObject(i);
+						String tag = o.getString("hashtag");
+						int num_posts = o.getInt("num_posts");
+						
+						adapter.add(tag, num_posts);
+						
+						Log.i("Filters", tag + ": " + num_posts);
+					}
+					
+					adapter.setupCheckedSavedTags();
+					
+					return null;
+				}
+				
+			}, User.getSavedUser(parent).getAccessToken(), 39.0, -77.0, rad);
+		}
 	}
 	
 	private class Tag {

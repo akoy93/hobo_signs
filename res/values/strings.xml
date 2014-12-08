@@ -36,8 +36,6 @@
     <!-- Filters -->
     <string name="filter_apply_button">Apply Filters</string>
     <string name="filter_reset_button">Reset Filters</string>
-    
-    
     <string name="Capture">Capture</string>
 
 </resources>

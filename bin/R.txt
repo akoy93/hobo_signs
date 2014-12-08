@@ -117,7 +117,6 @@ int id holo_light 0x7f070006
 int id hybrid 0x7f070004
 int id image_background 0x7f070014
 int id item_text 0x7f07002f
-int id list 0x7f07001f
 int id list_drop_sign_button 0x7f07002c
 int id login_button 0x7f07001e
 int id logout 0x7f070032
@@ -126,6 +125,7 @@ int id map_view 0x7f07002d
 int id match_parent 0x7f07000c
 int id monochrome 0x7f070013
 int id my_signs 0x7f070031
+int id my_signs_list 0x7f07001f
 int id none 0x7f070000
 int id normal 0x7f070001
 int id password_field 0x7f07001d

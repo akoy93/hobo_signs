@@ -93,13 +93,11 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			gps.getLocation();
 			double lat = gps.getLatitude();
 			double lng = gps.getLongitude();
-			Log.i("Get Nearby Signs", lat + ", " + lng);
-			
 			int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY, 1000000);
-			Log.i("Get Nearby Signs", "Radius: " + rad);
+			
+			Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng + ", Radius: " + rad);
 			
 			Post.getRangePosts(new MyCallable<Void>() {
-	
 				@Override
 				public Void call() throws Exception {
 					return null;
@@ -116,7 +114,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 						Log.i("Get Nearby Signs", arr.getString(i));
 					}
 					
-					listFrag.adapter.notifyDataSetChanged();
+					if (listFrag.adapter != null) listFrag.adapter.notifyDataSetChanged();
 					mapFrag.updateMarkers();
 					
 					return null;
@@ -133,7 +131,10 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			gps.getLocation();
 			double lat = gps.getLatitude();
 			double lng = gps.getLongitude();
-			Log.i("Get Hashtagged Signs", lat + ", " + lng);
+			int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY, 1000000);
+			
+			Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng + ", Radius: " + rad);
+			
 			
 			for (final String tag : tags) {
 				Log.i("Get Hashtagged Signs", "Tag search: " + tag);
@@ -167,7 +168,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 						
 						return null;
 					}
-				}, User.getSavedUser(this).getAccessToken(), 39.0, -77.0, tag);
+				}, User.getSavedUser(this).getAccessToken(), 39.0, -77.0, rad, tag);
 			}
 				
 		} else {

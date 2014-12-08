@@ -434,7 +434,6 @@ containing a value of this type.
         public static final int hybrid=0x7f070004;
         public static final int image_background=0x7f070014;
         public static final int item_text=0x7f07002f;
-        public static final int list=0x7f07001f;
         public static final int list_drop_sign_button=0x7f07002c;
         public static final int login_button=0x7f07001e;
         public static final int logout=0x7f070032;
@@ -443,6 +442,7 @@ containing a value of this type.
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
         public static final int my_signs=0x7f070031;
+        public static final int my_signs_list=0x7f07001f;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
         public static final int password_field=0x7f07001d;
