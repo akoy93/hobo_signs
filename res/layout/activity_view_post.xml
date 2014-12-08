@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/image_background_frame"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
     >
 
 		<VideoView 
 	        android:scrollbars="none"
 	        android:clickable="false"
 	        android:layout_width="fill_parent" 
-	        android:layout_height="fill_parent"      
+	        android:layout_height="wrap_content" 
+        	android:layout_centerHorizontal="true" 
 	        android:fitsSystemWindows="true"
 	        android:id="@+id/VideoView2">
         </VideoView>
-
-      	<TextView
-      	    android:id="@+id/sign_caption2"
-     		android:textSize="50px"
-	        android:layout_height="fill_parent"
-	        android:layout_width="fill_parent"
-	        android:gravity="center" />
 
 	    <Button
 	        android:id="@+id/sign_downvote"
@@ -28,7 +25,11 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="bottom|start"
 	        android:background="@drawable/downvote"
+        	android:layout_alignParentStart="true"
+        	android:layout_alignParentLeft="true"
+        	android:layout_alignParentBottom="true"
 	        android:padding="5dp" 
+	        android:text=" "
     		style="?android:attr/borderlessButtonStyle" />
 
 	    <TextView
@@ -37,15 +38,34 @@
 	        android:layout_height="wrap_content"
 	        android:textSize="100px"
 	        android:layout_gravity="bottom|center"
+        	android:layout_centerHorizontal="true"
+        	android:layout_alignParentBottom="true"
 	        android:padding="5dp" />
 
 	    <Button
 	        android:id="@+id/sign_upvote"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="bottom|end"
+        	android:layout_alignParentEnd="true"
+        	android:layout_alignParentRight="true"
+        	android:layout_alignParentBottom="true"
 	        android:background="@drawable/upvote"
+	        android:text=" "
 	        android:padding="5dp"
    			style="?android:attr/borderlessButtonStyle" />
+	    
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+        	android:layout_centerVertical="true">
+      	<TextView
+      	    android:id="@+id/sign_caption_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+     		android:textSize="50px"
+	        android:layout_gravity="bottom|center"
+        	android:layout_centerHorizontal="true"
+	        android:padding="20dp"  />
+      	</RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>

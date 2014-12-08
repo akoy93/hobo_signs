@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.hobosigns.TouchableWrapper.UpdateMapAfterUserInterection;
 import com.example.hobosigns.models.Post;
@@ -24,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.MapFragment;
 
 public class SignMapFragment extends Fragment {
 
@@ -133,18 +132,17 @@ public class SignMapFragment extends Fragment {
 							intent.putExtra("postVoteCount",
 									post.getVoteCount());
 							intent.putExtra("myVote", post.getMy_vote());
-							startActivity(intent);
+							intent.putExtra("postId", post.getPostID());
+							startActivity(intent);		
 						} else {
 							// Its a video
-							// picture post
-							Intent intent = new Intent(v.getContext(),
-									ViewVidSign.class);
+							Intent intent = new Intent(v.getContext(), ViewVideoSign.class);
 							intent.putExtra("postURI", post.getMediaUri());
 							intent.putExtra("postCaption", post.getCaption());
-							intent.putExtra("postVoteCount",
-									post.getVoteCount());
+							intent.putExtra("postVoteCount", post.getVoteCount());
 							intent.putExtra("myVote", post.getMy_vote());
-							startActivity(intent);
+							intent.putExtra("postId", post.getPostID());
+							startActivity(intent);	
 						}
 					}
 				});

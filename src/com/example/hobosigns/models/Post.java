@@ -15,9 +15,11 @@ import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
 import retrofit.mime.TypedFile;
+import android.util.Log;
 
 import com.example.hobosigns.rest.GetAPI;
 import com.example.hobosigns.rest.MyCallable;
+import com.example.hobosigns.rest.PostAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
@@ -68,6 +70,8 @@ public class Post {
 	private static final String get_hashtagged_extension ="/get_posts_with_hashtag";
 	private static final String get_hashtags_extension ="/hashtags";
 	private static final String get_range_extension ="/get_posts";
+	private static final String downvote ="/downvote";
+	private static final String upvote ="/upvote";
 	
 	public static Post jsonToPost(String jsonString){
 		GsonBuilder gsonBuilder = new GsonBuilder();
@@ -148,13 +152,31 @@ public class Post {
 	}
 	
 	public static void getAvailableHashtags(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range){  
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
     	parameters.add(new BasicNameValuePair("latitude", String.valueOf(lat)));
     	parameters.add(new BasicNameValuePair("longitude", String.valueOf(lon)));
     	parameters.add(new BasicNameValuePair("radius", String.valueOf(range)));
 		GetAPI get = new GetAPI(onResponseMethod, get_hashtags_extension);
 		get.execute(parameters);
+	}
+
+	public static void downvote(MyCallable<?> onResponseMethod, String accessToken, long postId ){  
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+    	parameters.add(new BasicNameValuePair("access_token", accessToken));
+    	parameters.add(new BasicNameValuePair("post_id", String.valueOf(postId)));
+    	PostAPI post = new PostAPI(onResponseMethod, downvote);
+		post.execute(parameters);
+	}
+
+	public static void upvote(MyCallable<?> onResponseMethod, String accessToken, long postId ){  
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+    	parameters.add(new BasicNameValuePair("access_token", accessToken));
+    	parameters.add(new BasicNameValuePair("post_id", String.valueOf(postId)));
+		PostAPI post = new PostAPI(onResponseMethod, upvote);
+		Log.i("upvote request", parameters.toString());
+		Log.i("upvote request", accessToken + postId);
+		post.execute(parameters);
 	}
 
 	public String getAuthor() {

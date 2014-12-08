@@ -72,11 +72,13 @@
         </activity>
         <activity
             android:name=".ViewSign"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="portrait"  >
         </activity>
         <activity
-            android:name=".ViewVidSign"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:name=".ViewVideoSign"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="portrait"  >
         </activity>
         <activity
             android:name=".CameraActivity"

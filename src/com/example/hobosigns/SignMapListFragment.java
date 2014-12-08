@@ -16,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hobosigns.models.Post;
 
@@ -63,10 +62,17 @@ public class SignMapListFragment extends Fragment {
 					intent.putExtra("postCaption", post.getCaption());
 					intent.putExtra("postVoteCount", post.getVoteCount());
 					intent.putExtra("myVote", post.getMy_vote());
+					intent.putExtra("postId", post.getPostID());
 					startActivity(intent);		
 				} else {
 					//Its a video
-					
+					Intent intent = new Intent(view.getContext(), ViewVideoSign.class);
+					intent.putExtra("postURI", post.getMediaUri());
+					intent.putExtra("postCaption", post.getCaption());
+					intent.putExtra("postVoteCount", post.getVoteCount());
+					intent.putExtra("myVote", post.getMy_vote());
+					intent.putExtra("postId", post.getPostID());
+					startActivity(intent);	
 				}
 			}
 			
