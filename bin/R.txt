@@ -94,7 +94,6 @@ int drawable ic_plusone_tall_off_client 0x7f02001f
 int drawable powered_by_google_dark 0x7f020020
 int drawable powered_by_google_light 0x7f020021
 int id VideoView 0x7f070017
-int id action_settings 0x7f070030
 int id book_now 0x7f070010
 int id button_capture 0x7f070019
 int id button_send_post 0x7f070016
@@ -119,12 +118,12 @@ int id image_background 0x7f070014
 int id item_text 0x7f07002f
 int id list_drop_sign_button 0x7f07002c
 int id login_button 0x7f07001e
-int id logout 0x7f070032
+int id logout 0x7f070031
 int id map 0x7f07002d
 int id map_drop_sign_button 0x7f07002e
 int id match_parent 0x7f07000c
 int id monochrome 0x7f070013
-int id my_signs 0x7f070031
+int id my_signs 0x7f070030
 int id my_signs_list 0x7f07001f
 int id none 0x7f070000
 int id normal 0x7f070001

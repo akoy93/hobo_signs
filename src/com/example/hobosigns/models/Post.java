@@ -239,4 +239,9 @@ public class Post {
 		if (this.postID != ((Post) other).postID) return false;
 		return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		return (int) this.postID;
+	}
 }

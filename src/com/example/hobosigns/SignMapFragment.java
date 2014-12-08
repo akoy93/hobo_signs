@@ -2,6 +2,7 @@ package com.example.hobosigns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -15,16 +16,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.hobosigns.TouchableWrapper.UpdateMapAfterUserInterection;
 import com.example.hobosigns.models.Post;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.MapFragment;
@@ -39,16 +44,19 @@ public class SignMapFragment extends Fragment {
 
 	private ArrayList<Marker> markers;
 	private HashMap<Marker, Post> markerToPost;
+	private HashMap<Post, Marker> postToMarker;
 	private static View v;
+	private TouchableWrapper mTouchView;
 
 	// roughly college park as default:
 	private double lat = 39;
-	private double lng = -77; 
-	
+	private double lng = -77;
+
 	public SignMapFragment(SignMapActivity parent) {
 		this.parent = parent;
 		markers = new ArrayList<Marker>();
 		markerToPost = new HashMap<Marker, Post>();
+		postToMarker = new HashMap<Post, Marker>();
 	}
 
 	@Override
@@ -84,21 +92,20 @@ public class SignMapFragment extends Fragment {
 				Log.i(TAG, "Google services are available");
 				map = ((MapFragment) getFragmentManager().findFragmentById(
 						R.id.map)).getMap();
-				
+
 				if (parent.gps.canGetLocation()) {
 					parent.gps.getLocation();
 					lat = parent.gps.getLatitude();
 					lng = parent.gps.getLongitude();
 				}
-					
-				
-				// Move the camera instantly to current location with a zoom of 21.
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 21));
+
+				// Move the camera instantly to current location with a zoom of
+				// 21.
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+						lat, lng), 5));
 
 				// Zoom in, animating the camera.
-				map.animateCamera(CameraUpdateFactory.zoomTo(18), 2000, null);
-				
-				parent.updatePosts();
+				map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
 
 				map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 					@Override
@@ -109,6 +116,10 @@ public class SignMapFragment extends Fragment {
 								Toast.LENGTH_SHORT).show();
 					}
 				});
+				
+				parent.updateMapLocation(map.getCameraPosition().target, map
+						.getProjection().getVisibleRegion().latLngBounds);
+				parent.updatePosts();
 			} else {
 				Log.i(TAG, "Google services are NOT available");
 			}
@@ -127,6 +138,27 @@ public class SignMapFragment extends Fragment {
 			Log.i(TAG, "we already have the map");
 		}
 
+		mTouchView = new TouchableWrapper(getActivity());
+		mTouchView.addView(v);
+		mTouchView
+				.setUpdateMapAfterUserInterection(new UpdateMapAfterUserInterection() {
+
+					@Override
+					public void onUpdateMapAfterUserInterection() {
+						Log.i(TAG, "Map moved - updating posts");
+						LatLng center = map.getCameraPosition().target;
+						LatLngBounds curScreen = map.getProjection()
+								.getVisibleRegion().latLngBounds;
+						parent.updateMapLocation(center, curScreen);
+						parent.updatePosts();
+					}
+
+				});
+		return mTouchView;
+	}
+
+	@Override
+	public View getView() {
 		return v;
 	}
 
@@ -138,16 +170,65 @@ public class SignMapFragment extends Fragment {
 		markerToPost.clear();
 	}
 
-	public void updateMarkers() {
-		for (Post p : parent.posts) {
+	public void updateMarkers(ArrayList<Post> oldPosts, ArrayList<Post> newPosts) {
+		HashSet<Post> old = new HashSet<Post>();
+		HashSet<Post> intersection = new HashSet<Post>();
+		ArrayList<Post> toRemove = new ArrayList<Post>();
+		ArrayList<Post> toAdd = new ArrayList<Post>();
+
+		for (Post p : oldPosts) {
+			old.add(p);
+		}
+		
+		for (Post p : newPosts) {
+			if (old.contains(p)) {
+				intersection.add(p);
+			}
+		}
+
+		for (Post p : oldPosts) {
+			if (!intersection.contains(p)) {
+				toRemove.add(p);
+			}
+		}
+
+		for (Post p : newPosts) {
+			if (!intersection.contains(p)) {
+				toAdd.add(p);
+			}
+		}
+
+		for (Post p : toRemove) {
+			Marker m = postToMarker.get(p);
+			m.remove();
+			markers.remove(m);
+			markerToPost.remove(m);
+			postToMarker.remove(p);
+		}
+
+		for (Post p : toAdd) {
 			Marker m = map.addMarker(new MarkerOptions()
 					.position(new LatLng(p.getLat(), p.getLon()))
 					.title(p.getAuthor().trim() + ": " + p.getCaption().trim())
 					.icon(BitmapDescriptorFactory.defaultMarker()));
 			markers.add(m);
 			markerToPost.put(m, p);
-			Log.i(TAG, "Adding post " + p.getPostID());
+			postToMarker.put(p, m);
 		}
+
+		// for (Post p : parent.posts) {
+		// Marker m = map.addMarker(new MarkerOptions()
+		// .position(new LatLng(p.getLat(), p.getLon()))
+		// .title(p.getAuthor().trim() + ": " + p.getCaption().trim())
+		// .icon(BitmapDescriptorFactory.defaultMarker()));
+		// markers.add(m);
+		// markerToPost.put(m, p);
+		// postToMarker.put(p, m);
+		// Log.i(TAG, "Adding post " + p.getPostID());
+		// }
+		Log.i(TAG, "Intersection: " + intersection.size());
+		Log.i(TAG, "Added " + toAdd.size() + " post(s) and removed "
+				+ toRemove.size() + " post(s).");
 	}
 
 	@Override

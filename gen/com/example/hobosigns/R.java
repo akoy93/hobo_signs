@@ -411,7 +411,6 @@ containing a value of this type.
     }
     public static final class id {
         public static final int VideoView=0x7f070017;
-        public static final int action_settings=0x7f070030;
         public static final int book_now=0x7f070010;
         public static final int button_capture=0x7f070019;
         public static final int button_send_post=0x7f070016;
@@ -436,12 +435,12 @@ containing a value of this type.
         public static final int item_text=0x7f07002f;
         public static final int list_drop_sign_button=0x7f07002c;
         public static final int login_button=0x7f07001e;
-        public static final int logout=0x7f070032;
+        public static final int logout=0x7f070031;
         public static final int map=0x7f07002d;
         public static final int map_drop_sign_button=0x7f07002e;
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
-        public static final int my_signs=0x7f070031;
+        public static final int my_signs=0x7f070030;
         public static final int my_signs_list=0x7f07001f;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;

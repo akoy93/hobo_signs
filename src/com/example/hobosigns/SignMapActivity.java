@@ -14,29 +14,38 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.hobosigns.SignMapFiltersFragment.FilterListAdapter;
 import com.example.hobosigns.models.Post;
 import com.example.hobosigns.models.User;
 import com.example.hobosigns.rest.MyCallable;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 public class SignMapActivity extends Activity implements ActionBar.TabListener {
 
 	private static final String TAG = "SignMapActivity";
-	
+
 	GPSTracker gps;
-	
+
 	SharedPreferences preferencesReader;
-	
+
 	SignMapFragment mapFrag;
 	SignMapListFragment listFrag;
 	SignMapFiltersFragment filterFrag;
-	
+
 	ArrayList<Post> posts;
+
+	// college park is default location
+	private double lat = 39;
+	private double lng = -77;
+	private int rad = 1500;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,135 +56,202 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		preferencesReader = getApplicationContext().getSharedPreferences(SettingsActivity.SETTINGS_KEY, Context.MODE_PRIVATE);
+		preferencesReader = getApplicationContext().getSharedPreferences(
+				SettingsActivity.SETTINGS_KEY, Context.MODE_PRIVATE);
 		gps = new GPSTracker(getApplicationContext());
 		posts = new ArrayList<Post>();
-		
+
 		mapFrag = new SignMapFragment(this);
-		actionBar.addTab(actionBar.newTab()
-				.setText("Map")
+		actionBar.addTab(actionBar.newTab().setText("Map")
 				.setTabListener(new TabListener(mapFrag)));
-		
+
 		Log.i(TAG, "Map fragment added");
-		
+
 		listFrag = new SignMapListFragment(this);
-		actionBar.addTab(actionBar.newTab()
-				.setText("List")
+		actionBar.addTab(actionBar.newTab().setText("List")
 				.setTabListener(new TabListener(listFrag)));
-		
+
 		Log.i(TAG, "List fragment added");
-		
+
 		filterFrag = new SignMapFiltersFragment(this);
-		actionBar.addTab(actionBar.newTab()
-				.setText("Filters")
+		actionBar.addTab(actionBar.newTab().setText("Filters")
 				.setTabListener(new TabListener(filterFrag)));
-		
+
 		Log.i(TAG, "Filter fragment added");
 	}
 
+	public void updateMapLocation(LatLng location, LatLngBounds bounds) {
+		lat = location.latitude;
+		lng = location.longitude;
+		float results[] = new float[1];
+		Location.distanceBetween(bounds.southwest.latitude, 0,
+				bounds.northeast.latitude, 0, results);
+		int newRad = (int) results[0] / 2;
+		if (newRad != 0) {
+			rad = newRad;
+		}
+	}
+
 	public void updatePosts() {
-		SharedPreferences preferencesReader = getSharedPreferences(SignMapFiltersFragment.FILTER_SETTINGS_KEY, Context.MODE_PRIVATE);
-		if (preferencesReader.getBoolean(SignMapFiltersFragment.FILTER_ENABLED_KEY, false)) {
+		SharedPreferences preferencesReader = getSharedPreferences(
+				SignMapFiltersFragment.FILTER_SETTINGS_KEY,
+				Context.MODE_PRIVATE);
+		if (preferencesReader.getBoolean(
+				SignMapFiltersFragment.FILTER_ENABLED_KEY, false)) {
 			Log.i(TAG, "Filters ENABLED");
-			posts.clear();
-			mapFrag.resetMarkers();
-			getHashtaggedSigns(preferencesReader.getStringSet(SignMapFiltersFragment.FILTER_TAGS_KEY, null));
+			getHashtaggedSigns(preferencesReader.getStringSet(
+					SignMapFiltersFragment.FILTER_TAGS_KEY, null));
 		} else {
 			Log.i(TAG, "Filters DISABLED");
-			posts.clear();
-			mapFrag.resetMarkers();
 			getNearbySigns();
 		}
 	}
-	
+
 	public void getNearbySigns() {
-		if (gps.canGetLocation()) {
-			gps.getLocation();
-			double lat = gps.getLatitude();
-			double lng = gps.getLongitude();
-			int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY, 1000000);
-			
-			Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng + ", Radius: " + rad);
-			
-			Post.getRangePosts(new MyCallable<Void>() {
+		// if (gps.canGetLocation()) {
+		// gps.getLocation();
+		// double lat = gps.getLatitude();
+		// double lng = gps.getLongitude();
+		// int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY,
+		// 1000000);
+
+		Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng
+				+ ", Radius: " + rad);
+
+		Post.getRangePosts(new MyCallable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				return null;
+			}
+
+			@Override
+			public Void call(JSONObject jsonObject) throws Exception {
+				ArrayList<Post> newPosts = new ArrayList<Post>();
+				ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
+				// posts.clear();
+				// mapFrag.resetMarkers();
+
+				JSONArray arr = jsonObject.getJSONArray("response");
+				// Log.i("Get Nearby Signs", arr.toString());
+
+				for (int i = 0; i < arr.length(); i++) {
+					Post p = Post.jsonToPost(arr.getString(i));
+					newPosts.add(p);
+					// Log.i("Get Nearby Signs", arr.getString(i));
+				}
+
+				posts = newPosts;
+				listFrag.adapter.update(posts);
+
+				mapFrag.updateMarkers(oldPosts, newPosts);
+
+				return null;
+			}
+
+		}, User.getSavedUser(this).getAccessToken(), lat, lng, rad);
+		// } else {
+		// Toast.makeText(this, "Cannot get location",
+		// Toast.LENGTH_SHORT).show();
+		// }
+	}
+
+	public void getHashtaggedSigns(Set<String> tags) {
+		// if (gps.canGetLocation()) {
+		// gps.getLocation();
+		// double lat = gps.getLatitude();
+		// double lng = gps.getLongitude();
+		// int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY,
+		// 1000000);
+
+		Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng
+				+ ", Radius: " + rad);
+
+		for (final String tag : tags) {
+			Log.i("Get Hashtagged Signs", "Tag search: " + tag);
+			Post.getHashtaggedPosts(new MyCallable<Void>() {
 				@Override
 				public Void call() throws Exception {
 					return null;
 				}
-	
+
 				@Override
 				public Void call(JSONObject jsonObject) throws Exception {
+					ArrayList<Post> newPosts = new ArrayList<Post>();
+					ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
+					// posts.clear();
+					// mapFrag.resetMarkers();
+
+					Log.i(tag, jsonObject.toString());
 					JSONArray arr = jsonObject.getJSONArray("response");
-					// Log.i("Get Nearby Signs", arr.toString());
-					
+					// Log.i("Get Hashtagged Signs", arr.toString());
+
 					for (int i = 0; i < arr.length(); i++) {
 						Post p = Post.jsonToPost(arr.getString(i));
-						posts.add(p);
-						Log.i("Get Nearby Signs", arr.getString(i));
+						newPosts.add(p);
+						// Log.i("Get Hashtagged Signs", arr.getString(i));
 					}
-					
-					if (listFrag.adapter != null) listFrag.adapter.notifyDataSetChanged();
-					mapFrag.updateMarkers();
-					
+
+					posts = newPosts;
+					listFrag.adapter.update(posts);
+					synchronized (mapFrag) {
+						// mapFrag.resetMarkers();
+						mapFrag.updateMarkers(oldPosts, newPosts);
+					}
+
 					return null;
 				}
-				
-			}, User.getSavedUser(this).getAccessToken(), lat, lng, rad);
-		} else {
-			Toast.makeText(this, "Cannot get location", Toast.LENGTH_SHORT).show();
+			}, User.getSavedUser(this).getAccessToken(), lat, lng, rad, tag);
 		}
+
+		// } else {
+		// Toast.makeText(this, "Cannot get location",
+		// Toast.LENGTH_SHORT).show();
+		// }
 	}
 
-	public void getHashtaggedSigns(Set<String> tags) {
-		if (gps.canGetLocation()) {
-			gps.getLocation();
-			double lat = gps.getLatitude();
-			double lng = gps.getLongitude();
-			int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY, 1000000);
-			
-			Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng + ", Radius: " + rad);
-			
-			
-			for (final String tag : tags) {
-				Log.i("Get Hashtagged Signs", "Tag search: " + tag);
-				Post.getHashtaggedPosts(new MyCallable<Void>() {
-					@Override
-					public Void call() throws Exception {
-						return null;
-					}
-		
-					@Override
-					public Void call(JSONObject jsonObject) throws Exception {
-						Log.i(tag, jsonObject.toString());
-						JSONArray arr = jsonObject.getJSONArray("response");
-						// Log.i("Get Hashtagged Signs", arr.toString());
-						
-						for (int i = 0; i < arr.length(); i++) {
-							Post p = Post.jsonToPost(arr.getString(i));
-							synchronized(posts) {
-								if (!posts.contains(p)) {
-									posts.add(p);
-								}
-							}
-							Log.i("Get Hashtagged Signs", arr.getString(i));
-						}
-						
-						listFrag.adapter.notifyDataSetChanged();
-						synchronized (mapFrag) {
-							mapFrag.resetMarkers();
-							mapFrag.updateMarkers();
-						}
-						
-						return null;
-					}
-				}, User.getSavedUser(this).getAccessToken(), lat, lng, rad, tag);
+	public void getHashtags(final FilterListAdapter adapter) {
+		// if (parent.gps.canGetLocation()) {
+		// parent.gps.getLocation();
+		// double lat = parent.gps.getLatitude();
+		// double lng = parent.gps.getLongitude();
+		// int rad =
+		// parent.preferencesReader.getInt(SettingsActivity.RADIUS_KEY,
+		// 1000000);
+
+		Log.i("Get All Hashtags", "Lat: " + lat + ", Lng: " + lng
+				+ ", Radius: " + rad);
+
+		Post.getAvailableHashtags(new MyCallable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				return null;
 			}
-				
-		} else {
-			Toast.makeText(this, "Cannot get location", Toast.LENGTH_SHORT).show();
-		}
+
+			@Override
+			public Void call(JSONObject jsonObject) throws Exception {
+				adapter.reset();
+				Log.i("Get All Hashtags", jsonObject.toString());
+				JSONArray arr = jsonObject.getJSONArray("response");
+				Log.i("Get All Hashtags", arr.toString());
+
+				for (int i = 0; i < arr.length(); i++) {
+					JSONObject o = arr.getJSONObject(i);
+					String tag = o.getString("hashtag");
+					int num_posts = o.getInt("num_posts");
+
+					adapter.add(tag, num_posts);
+
+					Log.i("Filters", tag + ": " + num_posts);
+				}
+
+				adapter.setupCheckedSavedTags();
+				return null;
+			}
+
+		}, User.getSavedUser(this).getAccessToken(), lat, lng, rad);
+		// }
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -189,14 +265,10 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			// Launch options activity
-			Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
-			startActivity(i);
-			return true;
-		} else if (id == R.id.my_signs) {
+		if (id == R.id.my_signs) {
 			// Launch My Signs activity
-			Intent i = new Intent(getApplicationContext(), MySignsActivity.class);
+			Intent i = new Intent(getApplicationContext(),
+					MySignsActivity.class);
 			startActivity(i);
 			return true;
 		} else if (id == R.id.logout) {
@@ -208,18 +280,21 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	@Override
-	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	public void onTabSelected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
 		// When the given tab is selected, switch to the corresponding page in
 		// the ViewPager.
 		// mViewPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
-	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	public void onTabUnselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
 	}
 
 	@Override
-	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+	public void onTabReselected(ActionBar.Tab tab,
+			FragmentTransaction fragmentTransaction) {
 	}
 
 	public static class TabListener implements ActionBar.TabListener {
@@ -253,6 +328,5 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 				ft.remove(mFragment);
 		}
 	}
-	
-	
+
 }
