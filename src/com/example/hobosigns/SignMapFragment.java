@@ -22,10 +22,13 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -51,6 +54,8 @@ public class SignMapFragment extends Fragment {
 	private double lng = -77;
 	
 	private static int defaultZoomLevel = 15;
+	
+	private boolean locationButtonClicked = false;
 
 	public SignMapFragment(SignMapActivity parent) {
 		this.parent = parent;
@@ -111,6 +116,7 @@ public class SignMapFragment extends Fragment {
 				Log.i(TAG, "Google services are available");
 				map = ((MapFragment) getFragmentManager().findFragmentById(
 						R.id.map)).getMap();
+				map.setMyLocationEnabled(true);
 
 				if (parent.gps.canGetLocation()) {
 					parent.gps.getLocation();
@@ -170,6 +176,30 @@ public class SignMapFragment extends Fragment {
 						}
 					}
 				});
+				
+				map.setOnMyLocationButtonClickListener(new OnMyLocationButtonClickListener() {
+
+					@Override
+					public boolean onMyLocationButtonClick() {
+						locationButtonClicked = true;
+						return false;
+					}
+					
+				});
+				
+				map.setOnCameraChangeListener(new OnCameraChangeListener() {
+
+					@Override
+					public void onCameraChange(CameraPosition arg0) {
+						if (locationButtonClicked == true) {
+							locationButtonClicked = false;
+							sync();
+						}
+					}
+					
+				});
+				
+				// sync map after construction
 				sync();
 			} else {
 				Log.i(TAG, "Google services are NOT available");
@@ -197,11 +227,7 @@ public class SignMapFragment extends Fragment {
 					@Override
 					public void onUpdateMapAfterUserInterection() {
 						Log.i(TAG, "Map moved - updating posts");
-						LatLng center = map.getCameraPosition().target;
-						LatLngBounds curScreen = map.getProjection()
-								.getVisibleRegion().latLngBounds;
-						parent.updateMapLocation(center, curScreen);
-						parent.updatePosts();
+						sync();
 					}
 
 				});
