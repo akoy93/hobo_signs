@@ -43,6 +43,8 @@ public class SignMapFiltersFragment extends Fragment {
 	public static String FILTER_SETTINGS_KEY = "HoboSignFilterSettings";
 	public static String FILTER_ENABLED_KEY = "HoboSignFilterEnabled";
 	public static String FILTER_TAGS_KEY = "HoboSignFilterTags";
+	private boolean resetEnabled = false;
+	private boolean applyEnabled = true;
 
 	public SignMapFiltersFragment(SignMapActivity parent) {
 		this.parent = parent;
@@ -67,10 +69,19 @@ public class SignMapFiltersFragment extends Fragment {
 		// android.R.layout.simple_list_item_1, SIGNS));
 		list.setAdapter(adapter);
 
-		Button apply = (Button) view.findViewById(R.id.filter_apply_button);
+		final Button apply = (Button) view.findViewById(R.id.filter_apply_button);
+		final Button reset = (Button) view.findViewById(R.id.filter_reset_button);
+		apply.setEnabled(SignMapFiltersFragment.this.applyEnabled);
+		reset.setEnabled(SignMapFiltersFragment.this.resetEnabled);
+		
 		apply.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				SignMapFiltersFragment.this.applyEnabled = false;
+				SignMapFiltersFragment.this.resetEnabled = true;
+				apply.setEnabled(SignMapFiltersFragment.this.applyEnabled);
+				reset.setEnabled(SignMapFiltersFragment.this.resetEnabled);
+				
 				Toast.makeText(parent, "Filtering posts by hashtag...",
 						Toast.LENGTH_SHORT).show();
 				adapter.saveTags();
@@ -78,10 +89,14 @@ public class SignMapFiltersFragment extends Fragment {
 			}
 		});
 
-		Button reset = (Button) view.findViewById(R.id.filter_reset_button);
 		reset.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				SignMapFiltersFragment.this.applyEnabled = true;
+				SignMapFiltersFragment.this.resetEnabled = false;
+				apply.setEnabled(SignMapFiltersFragment.this.applyEnabled);
+				reset.setEnabled(SignMapFiltersFragment.this.resetEnabled);
+				
 				Toast.makeText(parent, "Undoing hashtag filters...",
 						Toast.LENGTH_SHORT).show();
 				adapter.reset();

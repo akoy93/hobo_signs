@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class PostAPI extends AsyncTask<List<NameValuePair>, Void, JSONObject> {
 	
-	public static final String SERVER_URL = "http://104.236.2.144:49176";
+	public static final String SERVER_URL = "http://104.236.2.144:49177";
 	protected static final String TAG = "POST_API";
 	MyCallable<?> whatToDoWithData = null;
 	String extension;

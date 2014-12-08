@@ -1,6 +1,8 @@
 package com.example.hobosigns;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +15,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -180,16 +181,12 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			public Void call(JSONObject jsonObject) throws Exception {
 				ArrayList<Post> newPosts = new ArrayList<Post>();
 				ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
-				// posts.clear();
-				// mapFrag.resetMarkers();
 
 				JSONArray arr = jsonObject.getJSONArray("response");
-				// Log.i("Get Nearby Signs", arr.toString());
 
 				for (int i = 0; i < arr.length(); i++) {
 					Post p = Post.jsonToPost(arr.getString(i));
 					newPosts.add(p);
-					// Log.i("Get Nearby Signs", arr.getString(i));
 				}
 
 				posts = newPosts;
@@ -208,15 +205,26 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	public void getHashtaggedSigns(Set<String> tags) {
+		// TODO multiple hashtags not working
 		Log.i("Get Hashtagged Signs", "Lat: " + lat + ", Lng: " + lng
 				+ ", Radius: " + rad);
-
+//		ArrayList<Post> unfiltered = listFrag.adapter.getUnfiltered();
+//		listFrag.adapter.setUnfilteredPosts((ArrayList<Post>) posts.clone());
+		
 		ArrayList<Post> newPosts = new ArrayList<Post>();
 		ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
 		HashSet<Post> newPostSet = new HashSet<Post>();
 
+//		// swap filtered and unfiltered posts
+//		if (unfiltered != null) {
+//			posts = unfiltered;
+//		}
+//		
+//		Log.i("Hashtags", tags.toString());
+		
 		for (String tag : tags) {
 			for (Post p : posts) {
+				Log.i("Posts", posts.toString());
 				if (p.getHashtags().indexOf(tag) >= 0
 						&& !newPostSet.contains(p)) {
 					newPosts.add(p);
@@ -225,11 +233,18 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			}
 		}
 
+		Collections.sort(newPosts, new Comparator<Post>() {
+
+			@Override
+			public int compare(Post a, Post b) {
+				return (int) (a.getDistance() - b.getDistance());
+			}
+			
+		});
+		
 		posts = newPosts;
 		listFrag.adapter.update(posts);
-		synchronized (mapFrag) {
-			mapFrag.updateMarkers(oldPosts, newPosts);
-		}
+		mapFrag.updateMarkers(oldPosts, newPosts);
 
 		// if (viewMySigns) {
 		//
@@ -342,12 +357,14 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 				Toast.makeText(this, "Getting all signs...", Toast.LENGTH_SHORT)
 						.show();
 				viewMySigns = false;
+				filterFrag.resetAndUpdateAdapter();
 				this.updatePosts();
 				item.setTitle(R.string.my_signs);
 			} else {
 				Toast.makeText(this, "Getting your signs...",
 						Toast.LENGTH_SHORT).show();
 				viewMySigns = true;
+				filterFrag.resetAndUpdateAdapter();
 				this.updatePosts();
 				item.setTitle(R.string.all_signs);
 			}
