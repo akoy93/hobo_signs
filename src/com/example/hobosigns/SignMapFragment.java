@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,103 +27,109 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.MapFragment;
 
 public class SignMapFragment extends Fragment {
 
 	private static final String TAG = "SignMapFragment";
-	
+
 	private MapView mapView;
 	private GoogleMap map;
 	private SignMapActivity parent;
-	
+
 	private ArrayList<Marker> markers;
 	private HashMap<Marker, Post> markerToPost;
+	private static View v;
+
+	// roughly college park as default:
+	private double lat = 39;
+	private double lng = -77; 
 	
 	public SignMapFragment(SignMapActivity parent) {
 		this.parent = parent;
 		markers = new ArrayList<Marker>();
 		markerToPost = new HashMap<Marker, Post>();
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		MapsInitializer.initialize(parent);
 	}
-	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_sign_map, container, false);
-		
-		Log.i(TAG, "View inflated");
-		
-		int avail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(parent);
-		
-		if (avail == ConnectionResult.SUCCESS) {
-			Log.i(TAG, "Google services are available");
-			
-			// Gets the MapView from the XML layout and creates it
-	        MapView mapView = (MapView) view.findViewById(R.id.map_view);
-	        mapView.onCreate(savedInstanceState);
-	        // Log.i(TAG, "MapView is " + ((mapView == null) ? "null" : "NOT null"));
-	        
-	        // Gets to GoogleMap from the MapView and does initialization stuff
-	        map = mapView.getMap();
-	        // Log.i(TAG, "Map is " + ((map == null) ? "null" : "NOT null"));
-	        
-	        if (map != null) {
-	        	map.getUiSettings().setMyLocationButtonEnabled(false);
-	        	map.getUiSettings().setZoomControlsEnabled(true);
-	        	map.setMyLocationEnabled(true);
-	        	
-	        	// Updates the location and zoom of the MapView
-		        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(39.0, -77.0)));
-		        map.animateCamera(CameraUpdateFactory.zoomTo(4));
-		        
-		        parent.updatePosts();
-		        
-		        /*markers.add(map.addMarker(new MarkerOptions()
-				// Set the Marker's position
-						.position(new LatLng(39.0, -77.0))
-						// Set the title of the Marker's information window
-						.title("Test")
-						// Set the color for the Marker
-						.icon(BitmapDescriptorFactory
-								.defaultMarker())));*/
-		        
-		        map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		if (v != null) {
+			ViewGroup parent = (ViewGroup) v.getParent();
+			if (parent != null) {
+				parent.removeView(v);
+			}
+		}
+
+		try {
+			v = inflater.inflate(R.layout.fragment_sign_map, container, false);
+
+			Log.i(TAG, "View inflated");
+
+			int avail = GooglePlayServicesUtil
+					.isGooglePlayServicesAvailable(parent);
+
+			if (avail == ConnectionResult.SUCCESS) {
+				Log.i(TAG, "Google services are available");
+				map = ((MapFragment) getFragmentManager().findFragmentById(
+						R.id.map)).getMap();
+				
+				if (parent.gps.canGetLocation()) {
+					parent.gps.getLocation();
+					lat = parent.gps.getLatitude();
+					lng = parent.gps.getLongitude();
+				}
+					
+				
+				// Move the camera instantly to current location with a zoom of 21.
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 21));
+
+				// Zoom in, animating the camera.
+				map.animateCamera(CameraUpdateFactory.zoomTo(18), 2000, null);
+				
+				parent.updatePosts();
+
+				map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 					@Override
 					public void onInfoWindowClick(Marker m) {
 						// Can launch Sign View activity from here?
 						Post p = markerToPost.get(m);
-						Toast.makeText(parent, p.getLocationName(), Toast.LENGTH_SHORT).show();
+						Toast.makeText(parent, p.getLocationName(),
+								Toast.LENGTH_SHORT).show();
 					}
 				});
-	        }
-		} else {
-			Log.i(TAG, "Google services are NOT available");
-		}
-		
-		Button b = (Button) view.findViewById(R.id.map_drop_sign_button);
-		b.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Launch sign dropping activity
-				Intent intent = new Intent(v.getContext(),CameraActivity.class);
-				startActivity(intent);	
+			} else {
+				Log.i(TAG, "Google services are NOT available");
 			}
-		});
-		
-		return view;	
+
+			Button b = (Button) v.findViewById(R.id.map_drop_sign_button);
+			b.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch sign dropping activity
+					Intent intent = new Intent(v.getContext(),
+							CameraActivity.class);
+					startActivity(intent);
+				}
+			});
+		} catch (InflateException e) {
+			Log.i(TAG, "we already have the map");
+		}
+
+		return v;
 	}
-	
+
 	public void resetMarkers() {
 		for (Marker m : markers) {
 			m.remove();
@@ -130,35 +137,37 @@ public class SignMapFragment extends Fragment {
 		markers.clear();
 		markerToPost.clear();
 	}
-	
+
 	public void updateMarkers() {
 		for (Post p : parent.posts) {
 			Marker m = map.addMarker(new MarkerOptions()
 					.position(new LatLng(p.getLat(), p.getLon()))
 					.title(p.getAuthor().trim() + ": " + p.getCaption().trim())
-					.icon(BitmapDescriptorFactory
-							.defaultMarker()));
+					.icon(BitmapDescriptorFactory.defaultMarker()));
 			markers.add(m);
 			markerToPost.put(m, p);
 			Log.i(TAG, "Adding post " + p.getPostID());
 		}
 	}
-	
+
 	@Override
-    public void onResume() {
-		if (mapView != null) mapView.onResume();
-        super.onResume();
-    }
+	public void onResume() {
+		if (mapView != null)
+			mapView.onResume();
+		super.onResume();
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mapView != null) mapView.onDestroy();
-    }
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mapView != null)
+			mapView.onDestroy();
+	}
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        if (mapView != null) mapView.onLowMemory();
-    }
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		if (mapView != null)
+			mapView.onLowMemory();
+	}
 }

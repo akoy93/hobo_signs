@@ -120,7 +120,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 					return null;
 				}
 				
-			}, User.getSavedUser(this).getAccessToken(), 39.0, -77.0, rad);
+			}, User.getSavedUser(this).getAccessToken(), lat, lng, rad);
 		} else {
 			Toast.makeText(this, "Cannot get location", Toast.LENGTH_SHORT).show();
 		}
@@ -168,7 +168,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 						
 						return null;
 					}
-				}, User.getSavedUser(this).getAccessToken(), 39.0, -77.0, rad, tag);
+				}, User.getSavedUser(this).getAccessToken(), lat, lng, rad, tag);
 			}
 				
 		} else {

@@ -437,8 +437,8 @@ containing a value of this type.
         public static final int list_drop_sign_button=0x7f07002c;
         public static final int login_button=0x7f07001e;
         public static final int logout=0x7f070032;
+        public static final int map=0x7f07002d;
         public static final int map_drop_sign_button=0x7f07002e;
-        public static final int map_view=0x7f07002d;
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
         public static final int my_signs=0x7f070031;

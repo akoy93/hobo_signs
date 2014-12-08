@@ -128,7 +128,7 @@ public class SignMapFiltersFragment extends Fragment {
 					return null;
 				}
 				
-			}, User.getSavedUser(parent).getAccessToken(), 39.0, -77.0, rad);
+			}, User.getSavedUser(parent).getAccessToken(), lat, lng, rad);
 		}
 	}
 	
