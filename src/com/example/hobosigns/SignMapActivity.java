@@ -1,6 +1,7 @@
 package com.example.hobosigns;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -46,6 +47,8 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 	private double lat = 39;
 	private double lng = -77;
 	private int rad = 1500;
+
+	private boolean viewMySigns = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +106,57 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 					SignMapFiltersFragment.FILTER_TAGS_KEY, null));
 		} else {
 			Log.i(TAG, "Filters DISABLED");
-			getNearbySigns();
+			if (viewMySigns) {
+				Log.i(TAG, "Populating user's signs");
+				getMySigns();
+			} else {
+				getNearbySigns();
+			}
 		}
+	}
+
+	public void resetHashtags() {
+		// update hashtags
+		SharedPreferences preferencesReader = this.getSharedPreferences(
+				SignMapFiltersFragment.FILTER_SETTINGS_KEY,
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferencesReader.edit();
+		editor.putBoolean(SignMapFiltersFragment.FILTER_ENABLED_KEY, false);
+		editor.commit();
+		filterFrag.resetAndUpdateAdapter();
+	}
+
+	public void getMySigns() {
+		Log.i("Get My Signs", lat + ", " + lng);
+
+		Post.getMyPosts(new MyCallable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				return null;
+			}
+
+			@Override
+			public Void call(JSONObject jsonObject) throws Exception {
+				ArrayList<Post> newPosts = new ArrayList<Post>();
+				ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
+
+				JSONArray arr = jsonObject.getJSONArray("response");
+
+				for (int i = 0; i < arr.length(); i++) {
+					Post p = Post.jsonToPost(arr.getString(i));
+					newPosts.add(p);
+					// Log.i("Get My Signs", arr.getString(i));
+				}
+
+				posts = newPosts;
+				listFrag.adapter.update(posts);
+
+				mapFrag.updateMarkers(oldPosts, newPosts);
+
+				return null;
+			}
+
+		}, User.getSavedUser(this).getAccessToken(), lat, lng);
 	}
 
 	public void getNearbySigns() {
@@ -156,57 +208,74 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	public void getHashtaggedSigns(Set<String> tags) {
-		// if (gps.canGetLocation()) {
-		// gps.getLocation();
-		// double lat = gps.getLatitude();
-		// double lng = gps.getLongitude();
-		// int rad = preferencesReader.getInt(SettingsActivity.RADIUS_KEY,
-		// 1000000);
-
-		Log.i("Get Nearby Signs", "Lat: " + lat + ", Lng: " + lng
+		Log.i("Get Hashtagged Signs", "Lat: " + lat + ", Lng: " + lng
 				+ ", Radius: " + rad);
 
-		for (final String tag : tags) {
-			Log.i("Get Hashtagged Signs", "Tag search: " + tag);
-			Post.getHashtaggedPosts(new MyCallable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					return null;
+		ArrayList<Post> newPosts = new ArrayList<Post>();
+		ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
+		HashSet<Post> newPostSet = new HashSet<Post>();
+
+		for (String tag : tags) {
+			for (Post p : posts) {
+				if (p.getHashtags().indexOf(tag) >= 0
+						&& !newPostSet.contains(p)) {
+					newPosts.add(p);
+					newPostSet.add(p);
 				}
-
-				@Override
-				public Void call(JSONObject jsonObject) throws Exception {
-					ArrayList<Post> newPosts = new ArrayList<Post>();
-					ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
-					// posts.clear();
-					// mapFrag.resetMarkers();
-
-					Log.i(tag, jsonObject.toString());
-					JSONArray arr = jsonObject.getJSONArray("response");
-					// Log.i("Get Hashtagged Signs", arr.toString());
-
-					for (int i = 0; i < arr.length(); i++) {
-						Post p = Post.jsonToPost(arr.getString(i));
-						newPosts.add(p);
-						// Log.i("Get Hashtagged Signs", arr.getString(i));
-					}
-
-					posts = newPosts;
-					listFrag.adapter.update(posts);
-					synchronized (mapFrag) {
-						// mapFrag.resetMarkers();
-						mapFrag.updateMarkers(oldPosts, newPosts);
-					}
-
-					return null;
-				}
-			}, User.getSavedUser(this).getAccessToken(), lat, lng, rad, tag);
+			}
 		}
 
+		posts = newPosts;
+		listFrag.adapter.update(posts);
+		synchronized (mapFrag) {
+			mapFrag.updateMarkers(oldPosts, newPosts);
+		}
+
+		// if (viewMySigns) {
+		//
 		// } else {
-		// Toast.makeText(this, "Cannot get location",
-		// Toast.LENGTH_SHORT).show();
+		// for (final String tag : tags) {
+		// Log.i("Get Hashtagged Signs", "Tag search: " + tag);
+		// Post.getHashtaggedPosts(new MyCallable<Void>() {
+		// @Override
+		// public Void call() throws Exception {
+		// return null;
 		// }
+		//
+		// @Override
+		// public Void call(JSONObject jsonObject) throws Exception {
+		// ArrayList<Post> newPosts = new ArrayList<Post>();
+		// ArrayList<Post> oldPosts = (ArrayList<Post>) posts
+		// .clone();
+		// // posts.clear();
+		// // mapFrag.resetMarkers();
+		//
+		// Log.i(tag, jsonObject.toString());
+		// JSONArray arr = jsonObject.getJSONArray("response");
+		// // Log.i("Get Hashtagged Signs", arr.toString());
+		//
+		// for (int i = 0; i < arr.length(); i++) {
+		// Post p = Post.jsonToPost(arr.getString(i));
+		// newPosts.add(p);
+		// // Log.i("Get Hashtagged Signs", arr.getString(i));
+		// }
+		//
+		// posts = newPosts;
+		// listFrag.adapter.update(posts);
+		// synchronized (mapFrag) {
+		// // mapFrag.resetMarkers();
+		// mapFrag.updateMarkers(oldPosts, newPosts);
+		// }
+		//
+		// return null;
+		// }
+		// }, User.getSavedUser(this).getAccessToken(), lat, lng, rad, tag);
+		// }
+		// }
+		// // } else {
+		// // Toast.makeText(this, "Cannot get location",
+		// // Toast.LENGTH_SHORT).show();
+		// // }
 	}
 
 	public void getHashtags(final FilterListAdapter adapter) {
@@ -220,6 +289,9 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 
 		Log.i("Get All Hashtags", "Lat: " + lat + ", Lng: " + lng
 				+ ", Radius: " + rad);
+
+		// handle hashtags for "my signs case"
+		int radToUse = viewMySigns ? Integer.MAX_VALUE : rad;
 
 		Post.getAvailableHashtags(new MyCallable<Void>() {
 			@Override
@@ -248,7 +320,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 				return null;
 			}
 
-		}, User.getSavedUser(this).getAccessToken(), lat, lng, rad);
+		}, User.getSavedUser(this).getAccessToken(), lat, lng, radToUse);
 		// }
 	}
 
@@ -266,10 +338,20 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.my_signs) {
-			// Launch My Signs activity
-			Intent i = new Intent(getApplicationContext(),
-					MySignsActivity.class);
-			startActivity(i);
+			if (viewMySigns) {
+				Toast.makeText(this, "Getting all signs...", Toast.LENGTH_SHORT)
+						.show();
+				viewMySigns = false;
+				this.updatePosts();
+				item.setTitle(R.string.my_signs);
+			} else {
+				Toast.makeText(this, "Getting your signs...",
+						Toast.LENGTH_SHORT).show();
+				viewMySigns = true;
+				this.updatePosts();
+				item.setTitle(R.string.all_signs);
+			}
+
 			return true;
 		} else if (id == R.id.logout) {
 			// Launch My Signs activity

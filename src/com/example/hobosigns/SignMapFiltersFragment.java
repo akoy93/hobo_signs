@@ -49,7 +49,7 @@ public class SignMapFiltersFragment extends Fragment {
 		this.adapter = new FilterListAdapter();
 		this.adapter.reset(); // reset sharedpreferences
 	}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -99,6 +99,11 @@ public class SignMapFiltersFragment extends Fragment {
 		Log.i("FiltersFragment", "onActivityCreated");
 	}
 
+	public void resetAndUpdateAdapter() {
+		this.adapter.reset();
+		this.adapter.update();
+	}
+	
 	private class Tag {
 		String tag;
 		int numPosts;
