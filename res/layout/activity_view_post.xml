@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+		<VideoView 
+	        android:scrollbars="none"
+	        android:clickable="false"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"      
+	        android:fitsSystemWindows="true"
+	        android:id="@+id/VideoView">
+        </VideoView>
+
+      	<Text
+      	    android:id="@+id/sign_caption"
+      	    android:layout_width="match_parent"
+      	    android:layout_height="wrap_content"
+      	    android:layout_gravity="top|center"
+      	    android:scaleType="fitCenter" />
+
+	    <Text
+	        android:id="@+id/sign_downvote"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="bottom|start"
+	        android:background="@drawable/downvote"
+	        android:padding="5dp" />
+
+	    <Text
+	        android:id="@+id/sign_upvote"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="bottom|end"
+	        android:background="@drawable/upvote"
+	        android:padding="5dp" />
+
+</FrameLayout>

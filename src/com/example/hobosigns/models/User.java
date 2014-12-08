@@ -90,6 +90,8 @@ public class User {
 							Log.i(MainActivity.Tag, "Successful login");
 							//start signmap activity
 							Intent intent = new Intent(context, SignMapActivity.class);
+							 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+							 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 							context.startActivity(intent);
 						} else {
 							//TODO make toast informing you of failure.
@@ -156,6 +158,8 @@ public class User {
 				if(success == true){
 					//start signmap activity
 					Intent intent = new Intent(context, SignMapActivity.class);
+					 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+					 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 					context.startActivity(intent);
 				} else {
 					SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -164,6 +168,8 @@ public class User {
 					editor.commit();
 					// Start a login activity
 					Intent intent = new Intent(context,LoginActivity.class);
+					 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+					 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 					context.startActivity(intent);
 				}
 				return null;
@@ -189,9 +195,42 @@ public class User {
 		context.startActivity(intent);
 	}
 	
-	public void createAccount(){
+	public void createAccount(final Context context){
 		List<NameValuePair> params = this.getAsNameValPair();
-		PostAPI post = new PostAPI(create_extension);
+		PostAPI post = new PostAPI(
+				new MyCallable<Integer>(){
+					@Override
+					public Integer call() throws Exception { return null;}
+
+					@Override
+					public Integer call(JSONObject jsonObj)
+							throws Exception { 
+						boolean success = jsonObj.getBoolean("success");
+						if(success == true && User.this != null){
+							String uniName = jsonObj.getString("response");
+							User.this.setAccessToken(uniName);
+							//write the user to app context
+							User.this.saveUserToSharedContext(context);
+							Log.i(MainActivity.Tag, "Successful account creation and login");
+							//start signmap activity
+							Intent intent = new Intent(context, SignMapActivity.class);
+							 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+							 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+							context.startActivity(intent);
+						} else {
+							//TODO make toast informing you of failure.
+							Toast.makeText(context, "Failed to create account.", Toast.LENGTH_SHORT).show();
+							Log.i(MainActivity.Tag, "Unsuccessful account creation");		
+							SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+							SharedPreferences.Editor editor = preferencesReader.edit();
+							editor.putString(PREFS_KEY, null);	
+							editor.commit();
+						}
+						return null;
+					}
+					
+				}
+		, create_extension);
 		post.execute(params);
 	}
 
