@@ -78,6 +78,15 @@ public class SignMapFragment extends Fragment {
 			if (parent != null) {
 				parent.removeView(v);
 			}
+
+			if (map != null) {
+				if (!this.parent.posts.isEmpty()) {
+					Post p = this.parent.posts.get(0);
+					map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(
+							p.getLat(), p.getLon())), 1000, null);
+					sync();
+				}
+			}
 		}
 
 		try {
@@ -100,7 +109,7 @@ public class SignMapFragment extends Fragment {
 				}
 
 				// Move the camera instantly to current location with a zoom of
-				// 21.
+				// 5.
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
 						lat, lng), 5));
 
@@ -112,31 +121,34 @@ public class SignMapFragment extends Fragment {
 					public void onInfoWindowClick(Marker m) {
 						// Can launch Sign View activity from here?
 						Post post = markerToPost.get(m);
-						Log.i("ListView", "opening post of type: "+post.getMediaType());
-						if(post.getMediaType() != null && post.getMediaType().contains("image/jpeg")){
+						Log.i("ListView",
+								"opening post of type: " + post.getMediaType());
+						if (post.getMediaType() != null
+								&& post.getMediaType().contains("image/jpeg")) {
 							// picture post
-							Intent intent = new Intent(v.getContext(), ViewSign.class);
+							Intent intent = new Intent(v.getContext(),
+									ViewSign.class);
 							intent.putExtra("postURI", post.getMediaUri());
 							intent.putExtra("postCaption", post.getCaption());
-							intent.putExtra("postVoteCount", post.getVoteCount());
+							intent.putExtra("postVoteCount",
+									post.getVoteCount());
 							intent.putExtra("myVote", post.getMy_vote());
-							startActivity(intent);		
+							startActivity(intent);
 						} else {
-							//Its a video
+							// Its a video
 							// picture post
-							Intent intent = new Intent(v.getContext(), ViewVidSign.class);
+							Intent intent = new Intent(v.getContext(),
+									ViewVidSign.class);
 							intent.putExtra("postURI", post.getMediaUri());
 							intent.putExtra("postCaption", post.getCaption());
-							intent.putExtra("postVoteCount", post.getVoteCount());
+							intent.putExtra("postVoteCount",
+									post.getVoteCount());
 							intent.putExtra("myVote", post.getMy_vote());
-							startActivity(intent);	
+							startActivity(intent);
 						}
 					}
 				});
-				
-				parent.updateMapLocation(map.getCameraPosition().target, map
-						.getProjection().getVisibleRegion().latLngBounds);
-				parent.updatePosts();
+				sync();
 			} else {
 				Log.i(TAG, "Google services are NOT available");
 			}
@@ -179,6 +191,12 @@ public class SignMapFragment extends Fragment {
 		return v;
 	}
 
+	public void sync() {
+		parent.updateMapLocation(map.getCameraPosition().target, map
+				.getProjection().getVisibleRegion().latLngBounds);
+		parent.updatePosts();
+	}
+
 	public void resetMarkers() {
 		for (Marker m : markers) {
 			m.remove();
@@ -196,7 +214,7 @@ public class SignMapFragment extends Fragment {
 		for (Post p : oldPosts) {
 			old.add(p);
 		}
-		
+
 		for (Post p : newPosts) {
 			if (old.contains(p)) {
 				intersection.add(p);
@@ -244,8 +262,9 @@ public class SignMapFragment extends Fragment {
 		// Log.i(TAG, "Adding post " + p.getPostID());
 		// }
 		Log.i(TAG, "Intersection: " + intersection.size());
-		Log.i(TAG, "Added " + toAdd.size() + " post(s) and removed "
-				+ toRemove.size() + " post(s).");
+		Log.i(TAG,
+				"Added " + toAdd.size() + " post(s) and removed "
+						+ toRemove.size() + " post(s).");
 	}
 
 	@Override
