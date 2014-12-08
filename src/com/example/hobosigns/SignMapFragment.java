@@ -104,9 +104,26 @@ public class SignMapFragment extends Fragment {
 					@Override
 					public void onInfoWindowClick(Marker m) {
 						// Can launch Sign View activity from here?
-						Post p = markerToPost.get(m);
-						Toast.makeText(parent, p.getLocationName(),
-								Toast.LENGTH_SHORT).show();
+						Post post = markerToPost.get(m);
+						Log.i("ListView", "opening post of type: "+post.getMediaType());
+						if(post.getMediaType() != null && post.getMediaType().contains("image/jpeg")){
+							// picture post
+							Intent intent = new Intent(v.getContext(), ViewSign.class);
+							intent.putExtra("postURI", post.getMediaUri());
+							intent.putExtra("postCaption", post.getCaption());
+							intent.putExtra("postVoteCount", post.getVoteCount());
+							intent.putExtra("myVote", post.getMy_vote());
+							startActivity(intent);		
+						} else {
+							//Its a video
+							// picture post
+							Intent intent = new Intent(v.getContext(), ViewVidSign.class);
+							intent.putExtra("postURI", post.getMediaUri());
+							intent.putExtra("postCaption", post.getCaption());
+							intent.putExtra("postVoteCount", post.getVoteCount());
+							intent.putExtra("myVote", post.getMy_vote());
+							startActivity(intent);	
+						}
 					}
 				});
 			} else {

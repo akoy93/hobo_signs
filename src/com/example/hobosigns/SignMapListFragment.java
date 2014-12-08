@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,8 +56,21 @@ public class SignMapListFragment extends Fragment {
 		list.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> par, View view, int pos, long id) {
-				Post post = (Post) adapter.getItem(pos);
-				Toast.makeText(parent, post.getLocationName(), Toast.LENGTH_SHORT).show();
+				Post post = (Post) adapter.getItem(pos);	
+				// Launch Sign View activity here with post?
+				Log.i("ListView", "opening post of type: "+post.getMediaType());
+				if(post.getMediaType() != null && post.getMediaType().contains("image/jpeg")){
+					// picture post
+					Intent intent = new Intent(view.getContext(), ViewSign.class);
+					intent.putExtra("postURI", post.getMediaUri());
+					intent.putExtra("postCaption", post.getCaption());
+					intent.putExtra("postVoteCount", post.getVoteCount());
+					intent.putExtra("myVote", post.getMy_vote());
+					startActivity(intent);		
+				} else {
+					//Its a video
+					
+				}
 			}
 			
 		});

@@ -52,10 +52,14 @@ public class Post {
 	private Date date;
 	@SerializedName("media_type")
 	private String mediaType;
-	@SerializedName("media_uri")
+	@SerializedName("media_url")
 	private String mediaUri;
 	@SerializedName("location_name")
 	private String locationName;
+	@SerializedName("vote_count")
+	private int voteCount;
+	@SerializedName("my_vote")
+	private int my_vote;
 	private String caption;
 	private double distance;
 	private String hashtags;
@@ -238,5 +242,29 @@ public class Post {
 		if (this.getClass() != other.getClass()) return false;
 		if (this.postID != ((Post) other).postID) return false;
 		return true;
+	}
+
+	public String getMediaUri() {
+		return mediaUri;
+	}
+
+	public void setMediaUri(String mediaUri) {
+		this.mediaUri = mediaUri;
+	}
+
+	public int getVoteCount() {
+		return voteCount;
+	}
+
+	public void setVoteCount(int voteCount) {
+		this.voteCount = voteCount;
+	}
+
+	public int getMy_vote() {
+		return my_vote;
+	}
+
+	public void setMy_vote(int my_vote) {
+		this.my_vote = my_vote;
 	}
 }

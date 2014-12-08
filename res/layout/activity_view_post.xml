@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image_background_frame"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     >
@@ -11,30 +12,40 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="fill_parent"      
 	        android:fitsSystemWindows="true"
-	        android:id="@+id/VideoView">
+	        android:id="@+id/VideoView2">
         </VideoView>
 
-      	<Text
-      	    android:id="@+id/sign_caption"
-      	    android:layout_width="match_parent"
-      	    android:layout_height="wrap_content"
-      	    android:layout_gravity="top|center"
-      	    android:scaleType="fitCenter" />
+      	<TextView
+      	    android:id="@+id/sign_caption2"
+     		android:textSize="50px"
+	        android:layout_height="fill_parent"
+	        android:layout_width="fill_parent"
+	        android:gravity="center" />
 
-	    <Text
+	    <Button
 	        android:id="@+id/sign_downvote"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="bottom|start"
 	        android:background="@drawable/downvote"
+	        android:padding="5dp" 
+    		style="?android:attr/borderlessButtonStyle" />
+
+	    <TextView
+	        android:id="@+id/vote_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="100px"
+	        android:layout_gravity="bottom|center"
 	        android:padding="5dp" />
 
-	    <Text
+	    <Button
 	        android:id="@+id/sign_upvote"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="bottom|end"
 	        android:background="@drawable/upvote"
-	        android:padding="5dp" />
+	        android:padding="5dp"
+   			style="?android:attr/borderlessButtonStyle" />
 
 </FrameLayout>
