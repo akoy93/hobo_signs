@@ -24,13 +24,6 @@
     <string name="title_activity_sign_map">SignMapActivity</string>
     <string name="drop_sign_button">Drop a Sign</string>
 
-    <!-- User Settings -->
-    <string name="title_activity_settings">SettingsActivity</string>
-    <string name="curr_username_label">Username:</string>
-    <string name="radius_label">Search Radius in Meters:</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="save_button">Save Changes</string>
-
     <!-- My Signs -->
     <string name="title_activity_my_signs">MySignsActivity</string>
 

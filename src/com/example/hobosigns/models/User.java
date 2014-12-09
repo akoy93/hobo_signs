@@ -92,7 +92,6 @@ public class User {
 							//start signmap activity
 							Intent intent = new Intent(context, SignMapActivity.class);
 							 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-							 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 							context.startActivity(intent);
 						} else {
 							//TODO make toast informing you of failure.
@@ -161,7 +160,6 @@ public class User {
 					//start signmap activity
 					Intent intent = new Intent(context, SignMapActivity.class);
 					 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-					 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 					context.startActivity(intent);
 				} else {
 					SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -171,7 +169,6 @@ public class User {
 					// Start a login activity
 					Intent intent = new Intent(context,LoginActivity.class);
 					 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-					 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 					context.startActivity(intent);
 				}
 				return null;
@@ -219,7 +216,6 @@ public class User {
 							//start signmap activity
 							Intent intent = new Intent(context, SignMapActivity.class);
 							 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-							 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 							context.startActivity(intent);
 						} else {
 							//TODO make toast informing you of failure.

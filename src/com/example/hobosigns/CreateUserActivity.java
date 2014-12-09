@@ -1,6 +1,7 @@
 package com.example.hobosigns;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,5 +36,9 @@ public class CreateUserActivity extends Activity{
 		});
 	}
 	
-
+	@Override
+	public void onBackPressed() {
+	    Intent intent = new Intent(this, LoginActivity.class);
+	    startActivity(intent);
+	}
 }

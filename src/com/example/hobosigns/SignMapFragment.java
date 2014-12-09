@@ -321,6 +321,7 @@ public class SignMapFragment extends Fragment {
 
 	@Override
 	public void onResume() {
+		Log.i("Sign Map", "On resume");
 		if (mapView != null)
 			mapView.onResume();
 		super.onResume();

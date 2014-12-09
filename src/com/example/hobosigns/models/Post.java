@@ -269,6 +269,7 @@ public class Post {
 		if (other == null) return false;
 		if (this.getClass() != other.getClass()) return false;
 		if (this.postID != ((Post) other).postID) return false;
+		if (this.voteCount != ((Post) other).voteCount) return false;
 		return true;
 	}
 
@@ -298,6 +299,6 @@ public class Post {
 
 	@Override
 	public int hashCode() {
-		return (int) this.postID;
+		return (int) this.postID*37*this.voteCount;
 	}
 }

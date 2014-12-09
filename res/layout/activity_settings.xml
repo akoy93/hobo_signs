@@ -12,7 +12,6 @@
         android:id="@+id/radius_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/radius_label"
         android:labelFor="@+id/radius_field" />
     
     <EditText
@@ -28,13 +27,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/radius_field"
-        android:text="@string/cancel_button" />
+        android:text="cancel" />
     
     <Button
         android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cancel_button"
-        android:text="@string/save_button" />
+        android:text="save" />
 
 </RelativeLayout>

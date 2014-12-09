@@ -83,6 +83,15 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 
 		Log.i(TAG, "Filter fragment added");
 	}
+	
+	protected void onResume(){
+		super.onResume();
+		if(User.getSavedUser(this) == null){
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+		}
+		mapFrag.sync();
+	}
 
 	public void updateMapLocation(LatLng location, LatLngBounds bounds) {
 		lat = location.latitude;
@@ -376,6 +385,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		} else if (id == R.id.logout) {
 			// Launch My Signs activity
 			User.logout(this);
+			finish();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

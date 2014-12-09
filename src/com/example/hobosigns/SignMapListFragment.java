@@ -106,7 +106,7 @@ public class SignMapListFragment extends Fragment {
 		public Object getItem(int arg0) {
 			return list.get(arg0);
 		}
-
+		
 		@Override
 		public long getItemId(int arg0) {
 			return arg0;
