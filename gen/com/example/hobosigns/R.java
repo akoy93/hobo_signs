@@ -437,11 +437,12 @@ containing a value of this type.
         public static final int create_user_button=0x7f070020;
         public static final int create_username_field=0x7f07001b;
         public static final int filterCheckBox=0x7f070032;
+        public static final int filterNum=0x7f070034;
         public static final int filterText=0x7f070033;
-        public static final int filter_apply_button=0x7f070036;
-        public static final int filter_buttons=0x7f070035;
-        public static final int filter_list=0x7f070034;
-        public static final int filter_reset_button=0x7f070037;
+        public static final int filter_apply_button=0x7f070037;
+        public static final int filter_buttons=0x7f070036;
+        public static final int filter_list=0x7f070035;
+        public static final int filter_reset_button=0x7f070038;
         public static final int fragment_container=0x7f07002b;
         public static final int grayscale=0x7f070012;
         public static final int holo_dark=0x7f070005;
@@ -449,15 +450,24 @@ containing a value of this type.
         public static final int hybrid=0x7f070004;
         public static final int image_background=0x7f070014;
         public static final int image_background_frame=0x7f07002c;
-        public static final int item_text=0x7f07003c;
-        public static final int list_drop_sign_button=0x7f070039;
+        public static final int item_caption=0x7f07003e;
+        public static final int item_caption_label=0x7f07003d;
+        public static final int item_date=0x7f070042;
+        public static final int item_date_label=0x7f070041;
+        public static final int item_dist=0x7f070044;
+        public static final int item_dist_label=0x7f070043;
+        public static final int item_dist_unit=0x7f070045;
+        public static final int item_loc=0x7f070040;
+        public static final int item_loc_label=0x7f07003f;
+        public static final int item_votes=0x7f070046;
+        public static final int list_drop_sign_button=0x7f07003a;
         public static final int login_button=0x7f070023;
-        public static final int logout=0x7f07003e;
-        public static final int map=0x7f07003a;
-        public static final int map_drop_sign_button=0x7f07003b;
+        public static final int logout=0x7f070048;
+        public static final int map=0x7f07003b;
+        public static final int map_drop_sign_button=0x7f07003c;
         public static final int match_parent=0x7f07000c;
         public static final int monochrome=0x7f070013;
-        public static final int my_signs=0x7f07003d;
+        public static final int my_signs=0x7f070047;
         public static final int my_signs_list=0x7f070026;
         public static final int new_account_button=0x7f070025;
         public static final int none=0x7f070000;
@@ -474,7 +484,7 @@ containing a value of this type.
         public static final int selectionDetails=0x7f07000b;
         public static final int sign_caption_view=0x7f070031;
         public static final int sign_downvote=0x7f07002e;
-        public static final int sign_list=0x7f070038;
+        public static final int sign_list=0x7f070039;
         public static final int sign_upvote=0x7f070030;
         public static final int strict_sandbox=0x7f070009;
         public static final int terrain=0x7f070003;
@@ -506,7 +516,7 @@ containing a value of this type.
         public static final int sign_map=0x7f0a0000;
     }
     public static final class string {
-        public static final int Capture=0x7f05003b;
+        public static final int Capture=0x7f050040;
         public static final int accept=0x7f050002;
         /**  Options Menu 
          */
@@ -623,6 +633,13 @@ containing a value of this type.
         public static final int filter_apply_button=0x7f050039;
         public static final int filter_reset_button=0x7f05003a;
         public static final int hello_world=0x7f050024;
+        /**  Sign List Items 
+         */
+        public static final int item_caption_label=0x7f05003b;
+        public static final int item_date_label=0x7f05003d;
+        public static final int item_dist_label=0x7f05003e;
+        public static final int item_dist_unit=0x7f05003f;
+        public static final int item_loc_label=0x7f05003c;
         public static final int login_button=0x7f050030;
         public static final int logout=0x7f05002b;
         public static final int my_signs=0x7f050029;

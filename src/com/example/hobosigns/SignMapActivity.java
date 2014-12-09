@@ -77,7 +77,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 		Log.i(TAG, "List fragment added");
 
 		filterFrag = new SignMapFiltersFragment(this);
-		actionBar.addTab(actionBar.newTab().setText("Filters")
+		actionBar.addTab(actionBar.newTab().setText("Hashtags")
 				.setTabListener(new TabListener(filterFrag)));
 
 		Log.i(TAG, "Filter fragment added");
