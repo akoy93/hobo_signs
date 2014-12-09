@@ -121,6 +121,7 @@ public class Post {
 		this.hashtags = hashtags;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void getMyPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(3);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
@@ -130,6 +131,7 @@ public class Post {
 		get.execute(parameters);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void getRangePosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
@@ -140,6 +142,7 @@ public class Post {
 		get.execute(parameters);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void getHashtaggedPosts(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range, String hashtag){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
@@ -151,6 +154,7 @@ public class Post {
 		get.execute(parameters);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void getAvailableHashtags(MyCallable<?> onResponseMethod, String accessToken, double lat, double lon, int range){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(4);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
@@ -161,6 +165,7 @@ public class Post {
 		get.execute(parameters);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void downvote(MyCallable<?> onResponseMethod, String accessToken, long postId ){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));
@@ -169,6 +174,7 @@ public class Post {
 		post.execute(parameters);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void upvote(MyCallable<?> onResponseMethod, String accessToken, long postId ){  
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
     	parameters.add(new BasicNameValuePair("access_token", accessToken));

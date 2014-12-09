@@ -71,6 +71,7 @@ public class User {
 		return parameters;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void login(final Context context){
 		List<NameValuePair> params = this.getAsNameValPair();
 		PostAPI post = new PostAPI(
@@ -138,6 +139,7 @@ public class User {
         return gson.toJson(this);
     }
 	
+	@SuppressWarnings("unchecked")
 	public static void checkLoggedIn(final Context context){
 		User user = User.getSavedUser(context);
 		if(user == null){
@@ -179,6 +181,7 @@ public class User {
 		get.execute(params);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void logout(final Context context){
 		User user = User.getSavedUser(context);
 		if(user != null){
@@ -195,6 +198,7 @@ public class User {
 		context.startActivity(intent);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void createAccount(final Context context){
 		List<NameValuePair> params = this.getAsNameValPair();
 		PostAPI post = new PostAPI(

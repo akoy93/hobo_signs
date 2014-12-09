@@ -139,6 +139,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			@Override
 			public Void call(JSONObject jsonObject) throws Exception {
 				ArrayList<Post> newPosts = new ArrayList<Post>();
+				@SuppressWarnings("unchecked")
 				ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
 
 				JSONArray arr = jsonObject.getJSONArray("response");
@@ -180,6 +181,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 			@Override
 			public Void call(JSONObject jsonObject) throws Exception {
 				ArrayList<Post> newPosts = new ArrayList<Post>();
+				@SuppressWarnings("unchecked")
 				ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
 
 				JSONArray arr = jsonObject.getJSONArray("response");
@@ -212,6 +214,7 @@ public class SignMapActivity extends Activity implements ActionBar.TabListener {
 //		listFrag.adapter.setUnfilteredPosts((ArrayList<Post>) posts.clone());
 		
 		ArrayList<Post> newPosts = new ArrayList<Post>();
+		@SuppressWarnings("unchecked")
 		ArrayList<Post> oldPosts = (ArrayList<Post>) posts.clone();
 		HashSet<Post> newPostSet = new HashSet<Post>();
 

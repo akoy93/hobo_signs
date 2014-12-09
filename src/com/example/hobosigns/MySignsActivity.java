@@ -1,16 +1,14 @@
 package com.example.hobosigns;
 
 import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,15 +16,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hobosigns.models.Post;
 import com.example.hobosigns.models.User;
 import com.example.hobosigns.rest.MyCallable;
 
 public class MySignsActivity extends Activity {
 
-	private static final String[] SIGNS = { "My Sign 1", "My Sign 2", "My Sign 3" };
-	
 	GPSTracker gps;
 	MySignsAdapter adapter;
 	
@@ -89,6 +84,7 @@ public class MySignsActivity extends Activity {
 			return arg0;
 		}
 
+		@SuppressLint("InflateParams")
 		@Override
 		public View getView(int pos, View convertView, ViewGroup p) {
 			View view = null;

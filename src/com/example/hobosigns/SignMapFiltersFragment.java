@@ -2,16 +2,11 @@ package com.example.hobosigns;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,13 +24,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.hobosigns.models.Post;
-import com.example.hobosigns.models.User;
-import com.example.hobosigns.rest.MyCallable;
-
 public class SignMapFiltersFragment extends Fragment {
-
-	private static final String[] TAGS = { "Tag 1", "Tag 2", "Tag 3" };
 
 	private SignMapActivity parent;
 	private FilterListAdapter adapter;
@@ -136,6 +125,7 @@ public class SignMapFiltersFragment extends Fragment {
 		}
 	}
 
+	@SuppressLint("InflateParams")
 	protected class FilterListAdapter extends BaseAdapter implements
 			ListAdapter {
 

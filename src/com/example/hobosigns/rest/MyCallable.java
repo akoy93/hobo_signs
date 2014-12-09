@@ -2,7 +2,6 @@ package com.example.hobosigns.rest;
 
 import java.util.concurrent.Callable;
 
-import org.apache.http.HttpEntity;
 import org.json.JSONObject;
 
 /*

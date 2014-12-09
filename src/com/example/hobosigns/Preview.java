@@ -14,7 +14,8 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback {
 	private SurfaceHolder mHolder;
     private Camera mCamera;
 
-    public Preview(Context context, Camera camera) {
+    @SuppressWarnings("deprecation")
+	public Preview(Context context, Camera camera) {
         super(context);
         mCamera = camera;
 

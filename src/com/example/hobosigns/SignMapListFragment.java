@@ -1,7 +1,7 @@
 package com.example.hobosigns;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,12 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.example.hobosigns.models.Post;
 
 public class SignMapListFragment extends Fragment {
-	
-	private static final String[] SIGNS = { "Sign 1", "Sign 2", "Sign 3" };
 	
 	SignMapActivity parent;
 	ArrayList<Post> list;
@@ -114,6 +111,7 @@ public class SignMapListFragment extends Fragment {
 			return arg0;
 		}
 
+		@SuppressLint("InflateParams")
 		@Override
 		public View getView(int pos, View convertView, ViewGroup p) {
 			View view = null;

@@ -52,7 +52,6 @@ public class PostAPI extends AsyncTask<List<NameValuePair>, Void, JSONObject> {
 				JSONObject mainObject = new JSONObject(retSrc);
 				return mainObject;	
 			} else {
-				String result = EntityUtils.toString(response.getEntity());  
 				Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
 			}
 		} catch(Exception ex) {
