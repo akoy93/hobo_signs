@@ -142,7 +142,6 @@ public class SignMapListFragment extends Fragment {
 			list = posts;
 			this.notifyDataSetChanged();
 		}
-		
 	}
 	
 }

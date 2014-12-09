@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +15,6 @@ import android.hardware.Camera.PictureCallback;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnInfoListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -26,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+@SuppressLint({ "ClickableViewAccessibility", "SimpleDateFormat" })
 public class CameraActivity extends Activity {
 
 	private Camera mCamera;
@@ -181,24 +181,6 @@ public class CameraActivity extends Activity {
 		}
 		return c; // returns null if camera is unavailable
 	}
-
-	private static Camera.Size getBestPictureSize(Camera.Parameters parameters) {
-		Camera.Size result = null;
-
-		Log.i("Camera", "getBestPictureSize");
-		
-		for (Camera.Size size : parameters.getSupportedPictureSizes()) {
-			Log.i("Camera", "getBestPictureSize");
-			Log.i("resolution", result.width + ", " + result.height);
-			if (result == null
-					|| (size.width <= MAX_WIDTH && size.height <= MAX_HEIGHT && size.width
-							* size.height > result.width * result.height)) {
-				result = size;
-			}
-		}
-
-		return result;
-	}
 	
 	private PictureCallback mPicture = new PictureCallback() {
 
@@ -247,10 +229,6 @@ public class CameraActivity extends Activity {
 			mCamera.release(); // release the camera for other applications
 			mCamera = null;
 		}
-	}
-
-	private static Uri getOutputMediaFileUri(int type) {
-		return Uri.fromFile(getOutputMediaFile(type));
 	}
 
 	/** Create a File for saving an image or video */

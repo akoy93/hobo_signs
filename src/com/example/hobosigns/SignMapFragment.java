@@ -21,9 +21,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -50,6 +52,10 @@ public class SignMapFragment extends Fragment {
 	// roughly college park as default:
 	private double lat = 39;
 	private double lng = -77;
+	
+	private static int defaultZoomLevel = 15;
+	
+	private boolean locationButtonClicked = false;
 
 	public SignMapFragment(SignMapActivity parent) {
 		this.parent = parent;
@@ -82,8 +88,18 @@ public class SignMapFragment extends Fragment {
 				if (!this.parent.posts.isEmpty()) {
 					Post p = this.parent.posts.get(0);
 					map.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(
-							p.getLat(), p.getLon())), 1000, null);
-					sync();
+							p.getLat(), p.getLon())), 1000, new CancelableCallback() {
+
+						@Override
+						public void onFinish() {
+							sync();
+						}
+
+						@Override
+						public void onCancel() {
+							sync();
+						}
+					});
 				}
 			}
 		}
@@ -100,6 +116,7 @@ public class SignMapFragment extends Fragment {
 				Log.i(TAG, "Google services are available");
 				map = ((MapFragment) getFragmentManager().findFragmentById(
 						R.id.map)).getMap();
+				map.setMyLocationEnabled(true);
 
 				if (parent.gps.canGetLocation()) {
 					parent.gps.getLocation();
@@ -113,7 +130,19 @@ public class SignMapFragment extends Fragment {
 						lat, lng), 5));
 
 				// Zoom in, animating the camera.
-				map.animateCamera(CameraUpdateFactory.zoomTo(17), 2000, null);
+				map.animateCamera(CameraUpdateFactory.zoomTo(SignMapFragment.defaultZoomLevel), 2000,
+						new CancelableCallback() {
+
+							@Override
+							public void onFinish() {
+								sync();
+							}
+
+							@Override
+							public void onCancel() {
+								sync();
+							}
+						});
 
 				map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 					@Override
@@ -146,6 +175,30 @@ public class SignMapFragment extends Fragment {
 						}
 					}
 				});
+				
+				map.setOnMyLocationButtonClickListener(new OnMyLocationButtonClickListener() {
+
+					@Override
+					public boolean onMyLocationButtonClick() {
+						locationButtonClicked = true;
+						return false;
+					}
+					
+				});
+				
+				map.setOnCameraChangeListener(new OnCameraChangeListener() {
+
+					@Override
+					public void onCameraChange(CameraPosition arg0) {
+						if (locationButtonClicked == true) {
+							locationButtonClicked = false;
+							sync();
+						}
+					}
+					
+				});
+				
+				// sync map after construction
 				sync();
 			} else {
 				Log.i(TAG, "Google services are NOT available");
@@ -173,11 +226,7 @@ public class SignMapFragment extends Fragment {
 					@Override
 					public void onUpdateMapAfterUserInterection() {
 						Log.i(TAG, "Map moved - updating posts");
-						LatLng center = map.getCameraPosition().target;
-						LatLngBounds curScreen = map.getProjection()
-								.getVisibleRegion().latLngBounds;
-						parent.updateMapLocation(center, curScreen);
-						parent.updatePosts();
+						sync();
 					}
 
 				});
