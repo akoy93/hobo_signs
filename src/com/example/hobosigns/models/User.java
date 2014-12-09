@@ -218,8 +218,9 @@ public class User {
 							 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 							context.startActivity(intent);
 						} else {
-							//TODO make toast informing you of failure.
-							Toast.makeText(context, "Failed to create account.", Toast.LENGTH_SHORT).show();
+							//make toast informing you of failure.
+							String uniName = jsonObj.getString("error");
+							Toast.makeText(context, uniName, Toast.LENGTH_SHORT).show();
 							Log.i(MainActivity.Tag, "Unsuccessful account creation");		
 							SharedPreferences preferencesReader = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 							SharedPreferences.Editor editor = preferencesReader.edit();
