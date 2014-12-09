@@ -400,16 +400,23 @@ containing a value of this type.
         public static final int common_signin_btn_text_normal_light=0x7f020017;
         public static final int common_signin_btn_text_pressed_dark=0x7f020018;
         public static final int common_signin_btn_text_pressed_light=0x7f020019;
-        public static final int downvote=0x7f02001a;
-        public static final int hobo_signs_main=0x7f02001b;
-        public static final int ic_launcher=0x7f02001c;
-        public static final int ic_plusone_medium_off_client=0x7f02001d;
-        public static final int ic_plusone_small_off_client=0x7f02001e;
-        public static final int ic_plusone_standard_off_client=0x7f02001f;
-        public static final int ic_plusone_tall_off_client=0x7f020020;
-        public static final int powered_by_google_dark=0x7f020021;
-        public static final int powered_by_google_light=0x7f020022;
-        public static final int upvote=0x7f020023;
+        public static final int disabled=0x7f02001a;
+        public static final int downvote=0x7f02001b;
+        public static final int downvote_default=0x7f02001c;
+        public static final int downvote_disabled=0x7f02001d;
+        public static final int downvote_pressed=0x7f02001e;
+        public static final int hobo_signs_main=0x7f02001f;
+        public static final int ic_launcher=0x7f020020;
+        public static final int ic_plusone_medium_off_client=0x7f020021;
+        public static final int ic_plusone_small_off_client=0x7f020022;
+        public static final int ic_plusone_standard_off_client=0x7f020023;
+        public static final int ic_plusone_tall_off_client=0x7f020024;
+        public static final int powered_by_google_dark=0x7f020025;
+        public static final int powered_by_google_light=0x7f020026;
+        public static final int upvote=0x7f020027;
+        public static final int upvote_default=0x7f020028;
+        public static final int upvote_disabled=0x7f020029;
+        public static final int upvote_pressed=0x7f02002a;
     }
     public static final class id {
         public static final int VideoView=0x7f070017;
@@ -465,15 +472,15 @@ containing a value of this type.
         public static final int satellite=0x7f070002;
         public static final int save_button=0x7f07002a;
         public static final int selectionDetails=0x7f07000b;
-        public static final int sign_caption2=0x7f07002e;
-        public static final int sign_downvote=0x7f07002f;
+        public static final int sign_caption_view=0x7f070031;
+        public static final int sign_downvote=0x7f07002e;
         public static final int sign_list=0x7f070038;
-        public static final int sign_upvote=0x7f070031;
+        public static final int sign_upvote=0x7f070030;
         public static final int strict_sandbox=0x7f070009;
         public static final int terrain=0x7f070003;
         public static final int username_field=0x7f070021;
         public static final int username_label=0x7f07001a;
-        public static final int vote_view=0x7f070030;
+        public static final int vote_view=0x7f07002f;
         public static final int wrap_content=0x7f07000d;
     }
     public static final class integer {

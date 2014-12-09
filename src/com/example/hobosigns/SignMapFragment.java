@@ -240,9 +240,15 @@ public class SignMapFragment extends Fragment {
 		}
 
 		for (Post p : toAdd) {
+			int vcount = p.getVoteCount();
+			String vote = String.valueOf(vcount);
+			if (vcount >= 0) {
+				vote = "+" + vote;
+			}
+			
 			Marker m = map.addMarker(new MarkerOptions()
 					.position(new LatLng(p.getLat(), p.getLon()))
-					.title(p.getAuthor().trim() + ": " + p.getCaption().trim())
+					.title("(" + vote + ") " + p.getAuthor().trim() + ": " + p.getCaption().trim())
 					.icon(BitmapDescriptorFactory.defaultMarker()));
 			markers.add(m);
 			markerToPost.put(m, p);
