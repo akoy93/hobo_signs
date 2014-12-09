@@ -3,12 +3,97 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <TextView 
-	        android:id="@+id/item_text" 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_centerVertical="true"
-	        android:layout_margin="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:orientation="horizontal"
+    	android:layout_margin="16sp" >
+    	
+    	    <RelativeLayout 
+				android:layout_width="0dp"
+    			android:layout_height="match_parent"
+    			android:layout_weight="1" >
+    			
+    	        <TextView
+    	            android:id="@+id/item_caption_label"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:text="@string/item_caption_label"
+    				android:textStyle="bold" />
+    	        
+    	        <TextView
+    	            android:id="@+id/item_caption"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_toRightOf="@id/item_caption_label"
+    				android:layout_alignTop="@id/item_caption_label" />
+				
+    	        
+    	        <TextView
+    	            android:id="@+id/item_loc_label"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_below="@id/item_caption"
+    				android:text="@string/item_loc_label"
+    				android:textStyle="bold" />
+    	        
+    	        <TextView
+    	            android:id="@+id/item_loc"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_toRightOf="@id/item_loc_label"
+    				android:layout_alignTop="@id/item_loc_label" />
+				
+    	        
+    	        <TextView
+    	            android:id="@+id/item_date_label"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_below="@id/item_loc"
+    				android:text="@string/item_date_label"
+    				android:textStyle="bold" />
+    	        
+    	        <TextView
+    	            android:id="@+id/item_date"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_toRightOf="@id/item_date_label"
+    				android:layout_alignTop="@id/item_date_label" />
+    	        
+    	        
+    	        <TextView
+    	            android:id="@+id/item_dist_label"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_below="@id/item_date"
+    				android:text="@string/item_dist_label"
+    				android:textStyle="bold" />
+    	        
+    	        <TextView
+    	            android:id="@+id/item_dist"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_toRightOf="@id/item_dist_label"
+    				android:layout_alignTop="@id/item_dist_label" />
+    	        
+    	        <TextView
+    	            android:id="@+id/item_dist_unit"
+    	            android:layout_width="wrap_content"
+    				android:layout_height="wrap_content"
+    				android:layout_toRightOf="@id/item_dist"
+    				android:layout_alignTop="@id/item_dist"
+    				android:text="@string/item_dist_unit" />
+				
+    	    </RelativeLayout>
+    	    
+    	    <TextView
+    	        android:id="@+id/item_votes"
+    	        android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_marginLeft="8dp"
+				android:gravity="center"
+				android:textSize="35sp" />
+    	    
+    </LinearLayout>
 
 </RelativeLayout>

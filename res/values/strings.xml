@@ -37,6 +37,14 @@
     <!-- Filters -->
     <string name="filter_apply_button">Apply Filters</string>
     <string name="filter_reset_button">Reset Filters</string>
+    
+    <!-- Sign List Items -->
+    <string name="item_caption_label">"Caption: "</string>
+    <string name="item_loc_label">"Location: "</string>
+    <string name="item_date_label">"Created on: "</string>
+    <string name="item_dist_label">"Distance: "</string>
+    <string name="item_dist_unit">" meter(s)"</string>
+    
     <string name="Capture">Capture</string>
 
 </resources>

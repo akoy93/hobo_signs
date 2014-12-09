@@ -223,7 +223,7 @@ public class SignMapFiltersFragment extends Fragment {
 
 			final TextView filterTextView = (TextView) itemLayout
 					.findViewById(R.id.filterText);
-			filterTextView.setText(item.tag + ": " + item.numPosts);
+			filterTextView.setText("#" + item.tag);
 			filterTextView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -231,6 +231,16 @@ public class SignMapFiltersFragment extends Fragment {
 				}
 			});
 
+			final TextView filterNumView = (TextView) itemLayout
+					.findViewById(R.id.filterNum);
+			filterNumView.setText(item.numPosts + " Sign(s)");
+			filterNumView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					cb.toggle();
+				}
+			});
+			
 			return itemLayout;
 		}
 

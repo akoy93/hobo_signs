@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,15 +124,31 @@ public class SignMapListFragment extends Fragment {
 			
 			final Post post = (Post) getItem(pos);
 			
-			final TextView t = (TextView) view.findViewById(R.id.item_text);
-			t.setText(post.getPostID() + " " + post.getAuthor().trim() + ": " + post.getCaption().trim());
-			/*t.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// Launch Sign View activity here with post?
-					Toast.makeText(parent, post.getLocationName(), Toast.LENGTH_SHORT).show();
-				}
-			});*/
+			final TextView caption = (TextView) view.findViewById(R.id.item_caption);
+			caption.setText(post.getCaption().trim());
+			// caption.setText("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+			
+			final TextView loc = (TextView) view.findViewById(R.id.item_loc);
+			loc.setText(post.getLocationName().trim());
+			
+			final TextView date = (TextView) view.findViewById(R.id.item_date);
+			date.setText(post.getDate().toString());
+			
+			final TextView dist = (TextView) view.findViewById(R.id.item_dist);
+			dist.setText(String.valueOf(post.getDistance()));
+			
+			final TextView votes = (TextView) view.findViewById(R.id.item_votes);
+			int numVotes = post.getVoteCount();
+			String voteString = String.valueOf(numVotes);
+			if (numVotes > 0) {
+				voteString = "+" + voteString;
+				votes.setTextColor(Color.GREEN);
+			} else if (numVotes < 0) {
+				votes.setTextColor(Color.RED);
+			} else {
+				votes.setTextColor(Color.BLACK);
+			}
+			votes.setText(voteString);
 			
 			return view;
 		}
